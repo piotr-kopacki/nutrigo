@@ -56,7 +56,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
+# db.sqlite3 # Include database!
 0*.py
 
 # Flask stuff:
@@ -114,7 +114,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-# Local
-populate.py
-lorem.txt
