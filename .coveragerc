@@ -1,0 +1,12 @@
+[run]
+omit=
+  *apps.py,
+  *migrations/*,
+  *settings*,
+  *tests*,
+  *urls.py,
+  *srlegacy/*,
+  manage.py,
+  *wsgi.py
+source=
+    core/

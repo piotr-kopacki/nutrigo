@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nutrigo - get your diet straight!</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'api/style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+</head>
+
+<body>
+    {% block body %}
+    <iframe width="0" height="0" name="dummyframe" id="dummyframe"></iframe>
+
+    <div class="container h-100 text-white">
+        <div class="row h-100 justify-content-center align-items-center" style="padding-bottom: 40%;">
+            <div class="col-12">
+                <h1>Nutrigo</h1>
+                <form id="recipe-url-form" target="dummyframe">
+                    <div class="input-group">
+                        <input class="form-control" type="url" name="recipe-url" id="recipe-url"
+                            placeholder="Enter your favourite recipe url..." required>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit" id="submit-recipe">Go!</button>
+                        </span>
+                        <div class="invalid-feedback">
+                            <div class="alert alert-danger" role="alert">
+                                Something went wrong. Please try later.
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="spinnerContainer" style="padding-left: 50%; padding-top: 5%;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="recipe-title" class="modal-title">Recipe title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="chartDiv" class="chartDiv" width="15" height="15">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <p id="total-energy" class="text-center">Total calories: 0kcal</p>
+                    <table id="nutrient-table" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nutrient</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Per serving</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Chart options
+        var opts = {
+            lines: 13, // The number of lines to draw
+            length: 7, // The length of each line
+            width: 4, // The line thickness
+            radius: 10, // The radius of the inner circle
+            corners: 1, // Corner roundness (0..1)
+            rotate: 0, // The rotation offset
+            color: '#000', // #rgb or #rrggbb
+            speed: 1, // Rounds per second
+            trail: 60, // Afterglow percentage
+            shadow: false, // Whether to render a shadow
+            hwaccel: false, // Whether to use hardware acceleration
+            className: 'spinner', // The CSS class to assign to the spinner
+            zIndex: 2e9, // The z-index (defaults to 2000000000)
+            top: 'auto', // Top position relative to parent in px
+            left: 'auto' // Left position relative to parent in px
+        };
+        var target = document.getElementById('spinnerContainer');
+        var nutritionChart = null;
+
+        function fillNutritionTable(data) {
+            $("#nutrient-table tbody tr").remove();
+            var table = document.getElementById("nutrient-table").getElementsByTagName('tbody')[0];
+            var total_nutrition = Object.entries(data.total_nutrition);
+            var serving_nutrition = Object.entries(data.serving_nutrition)
+            for (var i = 0; i < total_nutrition.length; i++) {
+                row = table.insertRow();
+                cell = row.insertCell();
+                cell.innerHTML = total_nutrition[i][0].charAt(0).toUpperCase() + total_nutrition[i][0].substring(1).toLowerCase()
+                cell = row.insertCell();
+                cell.innerHTML = total_nutrition[i][1][0] + " " + total_nutrition[i][1][1]
+                cell = row.insertCell()
+                cell.innerHTML = serving_nutrition[i][1][0] + " " + serving_nutrition[i][1][1]
+            }
+        }
+
+        function nutritionModal(data) {
+            // Fetching basic recipe data
+            var RECIPE_TITLE = data.title;
+            var RECIPE_URL = data.url;
+            var RECIPE_SERVINGS = data.servings;
+            // Calculating total kcal for carbohydrates, fats and proteins
+            // to display on chart
+            var TOTAL_ENERGY = Math.round(data.total_nutrition.ENERGY[0]);
+            // Setting modal title
+            document.getElementById('recipe-title').innerHTML = `<a href="${RECIPE_URL}" target="_blank">${RECIPE_TITLE}</a>`
+            // Setting total calories
+            document.getElementById('total-energy').innerHTML = `<strong>Total calories:</strong> ${TOTAL_ENERGY} kcal`
+            // Destroying old chart so they are not overlapping
+            if (nutritionChart != null) {
+                nutritionChart.clear()
+                nutritionChart.destroy()
+            }
+            // Displaying chart
+            var ctx = document.getElementById('myChart').getContext('2d');
+            nutritionChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Proteins', 'Fats', 'Carbohydrates'],
+                    datasets: [{
+                        label: 'Total nutrition',
+                        data: [data.total_nutrition.PROTEIN[0], data.total_nutrition.FAT[0], data.total_nutrition.CARB[0]],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        enabled: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                return data.labels[tooltipItem.index] + ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] + 'g';
+                            }
+                        }
+                    },
+                }
+            });
+            // Prepare nutrient table
+            fillNutritionTable(data);
+            $("#myModal").modal()
+        }
+
+        $("#recipe-url-form").submit(function (e) {
+            $("#recipe-url").removeClass("is-invalid")
+            var spinner = new Spinner(opts).spin(target);
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'calculate-from-url' %}",
+                type: "POST",
+                data: {
+                    "url": $('#recipe-url')[0].value
+                },
+                success: function (data) {
+                    console.log(data);
+                    spinner.stop();
+                    nutritionModal(data);
+                },
+                error: function (error) {
+                    spinner.stop();
+                    $("#recipe-url").addClass("is-invalid")
+                    if (error.responseJSON.error) {
+                        $(".alert.alert-danger")[0].innerText = error.responseJSON.error
+                    }
+                }
+            })
+
+        })
+    </script>
+    {% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
