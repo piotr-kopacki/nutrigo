@@ -1,8 +1,10 @@
-from core import utils
-from core.models import Food, FoodWeight
 from difflib import get_close_matches
+
 from django.core.cache import cache
 from django.db.models import Q
+
+from core import utils
+from core.models import Food, FoodWeight
 
 
 def match_food(string: str, n: int = 5) -> list:

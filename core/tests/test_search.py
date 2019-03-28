@@ -1,6 +1,6 @@
 import pytest
 
-from core import search, models, utils
+from core import models, search, utils
 
 
 @pytest.mark.django_db

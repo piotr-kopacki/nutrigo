@@ -4,7 +4,7 @@
   <a href='https://coveralls.io/github/MakuZo/nutrigo?branch=master'><img src='https://coveralls.io/repos/github/MakuZo/nutrigo/badge.svg?branch=master' alt='Coverage Status' /></a>
 <img src="https://travis-ci.org/MakuZo/nutrigo.svg?branch=master">
 </p>
-<p align="center">Try live <a href="http://nutrigo.makuzo.usermd.net">here</a></p>
+<p align="center">Try live <a href="https://nutrigo.makuzo.usermd.net">here</a></p>
 <p align="center">
 <img align="center" width="70%" height="70%" src="https://i.imgur.com/3YKGyEt.jpg"></img>
 </p>

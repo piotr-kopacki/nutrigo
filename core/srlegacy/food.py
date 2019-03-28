@@ -1,4 +1,5 @@
 import json
+
 import core.models
 
 COLUMN_NAMES = (   # Corresponding origin column names to model fields
@@ -71,6 +72,3 @@ def main(filename):
                 core.models.Food.objects.bulk_create(to_add)
                 to_add.clear()
     core.models.Food.objects.bulk_create(to_add)
-
-
-

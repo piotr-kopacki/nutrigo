@@ -1,5 +1,6 @@
 from core.commonnames import common_names
 
+
 def test_common_names_is_dict():
     assert isinstance(common_names, dict)
 

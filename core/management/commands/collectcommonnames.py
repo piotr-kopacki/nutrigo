@@ -1,8 +1,10 @@
+from pathlib import Path
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+
 from core.models import Food
 
-from pathlib import Path
 
 class Command(BaseCommand):
     help = 'Updates Food table with new common names from ./core/commonnames.py'

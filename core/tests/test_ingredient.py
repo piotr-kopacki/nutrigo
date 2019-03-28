@@ -1,6 +1,6 @@
 import pytest
 
-from core import models, ingredient
+from core import ingredient, models
 
 
 @pytest.mark.django_db
@@ -70,19 +70,47 @@ class TestIngredient:
             ingredient.Ingredient(
                 "Chicken breast"
             )  # Unit wasn't specified and Chicken doesn't have any weight objects so it should raise IngredientError
-    
+
     def test_calculate_total_nutrition(self):
         food = models.Food.objects.create(desc_long="Chicken", desc_short="CHICKN")
         food2 = models.Food.objects.create(desc_long="Apple", desc_short="APPL")
-        models.FoodNutrition.objects.create(food=food, desc="Energy (kcal)", value=20, units='kcal', tagname="ENERC_KCAL")
-        models.FoodNutrition.objects.create(food=food, desc="Proteins", value=5, units='g', tagname="PROCNT")
-        models.FoodNutrition.objects.create(food=food2, desc="Energy (kcal)", value=10.1, units='kcal', tagname="ENERC_KCAL")
+        models.FoodNutrition.objects.create(
+            food=food,
+            desc="Energy (kcal)",
+            value=20,
+            units="kcal",
+            tagname="ENERC_KCAL",
+        )
+        models.FoodNutrition.objects.create(
+            food=food, desc="Proteins", value=5, units="g", tagname="PROCNT"
+        )
+        models.FoodNutrition.objects.create(
+            food=food2,
+            desc="Energy (kcal)",
+            value=10.1,
+            units="kcal",
+            tagname="ENERC_KCAL",
+        )
         ings = [
             ingredient.Ingredient("100 g chicken"),
-            ingredient.Ingredient("100 g apple")
+            ingredient.Ingredient("100 g apple"),
         ]
         total_nutrition = ingredient.calculate_total_nutrition(ings)
-        assert total_nutrition['ENERGY'][0] == 30.1
-        assert total_nutrition['PROTEIN'][0] == 5
-        assert total_nutrition['FAT'][0] == 0.0
-        assert total_nutrition['CARB'][0] == 0.0
+        assert total_nutrition["ENERGY"][0] == 30.1
+        assert total_nutrition["PROTEIN"][0] == 5
+        assert total_nutrition["FAT"][0] == 0.0
+        assert total_nutrition["CARB"][0] == 0.0
+
+    def test_calculate_serving_nutrition(self):
+        chicken = models.Food.objects.create(desc_long="Chicken", desc_short="CHICKN")
+        models.FoodNutrition.objects.create(
+            food=chicken,
+            desc="Energy (kcal)",
+            value=20,
+            units="kcal",
+            tagname="ENERC_KCAL",
+        )
+        ings = [ingredient.Ingredient("100 g chicken")]
+        total_nutrition = ingredient.calculate_total_nutrition(ings)
+        serving_nutrition = ingredient.calculate_serving_nutrition(total_nutrition, 2)
+        assert serving_nutrition["ENERGY"][0] == float(chicken.nutrition.first().value) / 2.0

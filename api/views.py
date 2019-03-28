@@ -1,16 +1,16 @@
 import requests
-
 from django.views.generic import TemplateView
-
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from core.ingredient import Ingredient, IngredientError, calculate_total_nutrition, calculate_serving_nutrition
-from core.recipe import recipe_sites
 from core import utils
+from core.ingredient import (Ingredient, IngredientError,
+                             calculate_serving_nutrition,
+                             calculate_total_nutrition)
+from core.recipe import recipe_sites
 
 
 class IndexView(TemplateView):

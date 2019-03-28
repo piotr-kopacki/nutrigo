@@ -9,7 +9,7 @@ class IngredientError(Exception):
         self.message = message
 
 
-class Ingredient():
+class Ingredient:
     """Parses and stores data about an ingredient.
     
     Class which parses ingredient and stores data about it's weight, amount, nutrition, etc..
@@ -151,8 +151,8 @@ def calculate_total_nutrition(ingredients: list) -> dict:
     total_nutrition = {
         # Big 4
         "ENERGY": 0,
-        "FAT": 0, 
-        "PROTEIN": 0, 
+        "FAT": 0,
+        "PROTEIN": 0,
         "CARB": 0,
         # The rest
         # "FAT_SAT": 0,
@@ -165,9 +165,9 @@ def calculate_total_nutrition(ingredients: list) -> dict:
         "FIBER": 0,
     }
     to_tagname = {
-        "ENERGY": "ENERC_KCAL", 
-        "FAT": "FAT", 
-        "PROTEIN": "PROCNT", 
+        "ENERGY": "ENERC_KCAL",
+        "FAT": "FAT",
+        "PROTEIN": "PROCNT",
         "CARB": "CHOCDF",
         # The rest
         "FAT_SAT": "FASAT",
@@ -180,9 +180,9 @@ def calculate_total_nutrition(ingredients: list) -> dict:
         "FIBER": "FIBTG",
     }
     units = {
-        "ENERGY": "kcal", 
-        "FAT": "g", 
-        "PROTEIN": "g", 
+        "ENERGY": "kcal",
+        "FAT": "g",
+        "PROTEIN": "g",
         "CARB": "g",
         "FAT_KCAL": "kcal",
         "PROTEIN_KCAL": "kcal",
@@ -204,7 +204,6 @@ def calculate_total_nutrition(ingredients: list) -> dict:
     # Round results and create a tuple with value and unit
     for k, v in total_nutrition.items():
         total_nutrition[k] = (round(v, 2), units[k])
-    
 
     return total_nutrition
 
@@ -226,4 +225,3 @@ def calculate_serving_nutrition(total_nutrition: dict, servings: int) -> dict:
         }
     """
     return {k: (round(t[0] / servings, 2), t[1]) for k, t in total_nutrition.items()}
-

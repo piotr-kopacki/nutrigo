@@ -1,7 +1,6 @@
+import pytest
 from django.shortcuts import reverse
 from rest_framework.test import APIClient
-
-import pytest
 
 client = APIClient()
 

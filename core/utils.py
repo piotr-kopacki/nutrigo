@@ -1,10 +1,10 @@
 import re
-import textblob.translate
-import textblob.en.inflect
 import time
-
-from nltk.stem import WordNetLemmatizer
 from urllib.parse import urlparse
+
+import textblob.en.inflect
+import textblob.translate
+from nltk.stem import WordNetLemmatizer
 
 DEFAULT_MEASUREMENT = "serving"
 

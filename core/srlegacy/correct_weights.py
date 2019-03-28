@@ -1,5 +1,7 @@
-from core.models import FoodWeight
 from django.db.transaction import atomic
+
+from core.models import FoodWeight
+
 
 @atomic
 def correct():

@@ -1,4 +1,5 @@
 import json
+
 import core.models
 
 DATA_COLUMN_NAMES = ( # Corresponding origin column names to model fields

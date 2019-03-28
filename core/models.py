@@ -97,4 +97,3 @@ class FoodNutrition(models.Model):
 
     def __str__(self): # pragma: no cover
         return f"{self.tagname} of {self.food}"
-
