@@ -1,4 +1,5 @@
 import requests
+from django.core.cache import cache
 from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
@@ -30,7 +31,6 @@ class CalculateFromURL(APIView):
         Returns data about a recipe.
         """
         # TODO: Add proper logging
-        # TODO: Add caching
         # TODO: Move validation to a serializer?
         # Checking if url is valid.
         recipe_url = request.data.get("url", None)
@@ -39,6 +39,11 @@ class CalculateFromURL(APIView):
                 {"error": "URL cannot be empty."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        # If cached, return data
+        cached = cache.get(recipe_url, None)
+        if cached:
+            return Response(cached)
+        # Continue validation
         recipe_domain = utils.get_domain_from_url(recipe_url)
         if not recipe_domain in recipe_sites:
             return Response(
@@ -67,12 +72,14 @@ class CalculateFromURL(APIView):
         total_nutrition = calculate_total_nutrition(parsed['ingredients'])
         serving_nutrition = calculate_serving_nutrition(total_nutrition, parsed['servings'])
         # Creating response
-        response = {
+        response_data = {
             'url': recipe_url,
             'title': parsed['title'],
             'servings': parsed['servings'],
             'total_nutrition': total_nutrition,
             'serving_nutrition': serving_nutrition,
-            'ingredients': [(ing.name, ing.weight, ing.matched_food.desc_long) for ing in parsed['ingredients']], # delete dis
+            #'ingredients': [(ing.name, ing.weight, ing.matched_food.desc_long) for ing in parsed['ingredients']], # delete dis
         }
-        return Response(response)
+        # Cache response
+        cache.set(recipe_url, response_data, version=1)
+        return Response(response_data)
