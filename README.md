@@ -1,8 +1,8 @@
 <h1 align="center">nutrigo</h1>
 <p align="center">Calculate nutrition for your favourite recipe!</p>
 <p align="center">
-  <a href='https://coveralls.io/github/MakuZo/nutrigo?branch=master'><img src='https://coveralls.io/repos/github/MakuZo/nutrigo/badge.svg?branch=master&service=github' alt='Coverage Status' /></a>
-<img src="https://travis-ci.org/MakuZo/nutrigo.svg?branch=master">
+  <img alt="Coveralls github branch" src="https://img.shields.io/coveralls/github/MakuZo/nutrigo/master.svg">
+<img alt="Travis (.com)" src="https://img.shields.io/travis/com/MakuZo/nutrigo.svg">
 </p>
 <p align="center">Try live <a href="https://nutrigo.makuzo.usermd.net">here</a></p>
 <p align="center">
