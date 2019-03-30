@@ -1,4 +1,10 @@
 from .base import *
-from .prod import CACHES
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+    }
+}
 
 SECRET_KEY = "TEST_SECRET_KEY"
