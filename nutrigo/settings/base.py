@@ -7,12 +7,7 @@ import os
 from decouple import Csv, config
 from django.core.management.utils import get_random_secret_key
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-SECRET_KEY = config('SECRET_KEY', default=get_random_secret_key())
-DEBUG = config('DEBUG', cast=bool, default=True)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost,127.0.0.1')
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', cast=bool, default=False)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -60,13 +55,6 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache_table',
-    }
-}
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -80,6 +68,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-ENV_PATH = os.path.abspath(os.path.dirname(__file__))
-STATIC_ROOT = os.path.join(ENV_PATH, '../public/static/') 
-MEDIA_ROOT = os.path.join(ENV_PATH, '../public/media/') 
+

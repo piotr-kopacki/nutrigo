@@ -81,5 +81,6 @@ class CalculateFromURL(APIView):
             #'ingredients': [(ing.name, ing.weight, ing.matched_food.desc_long) for ing in parsed['ingredients']], # delete dis
         }
         # Cache response
+        # TODO: Add proper versioning for cache (e.g. version it using MINOR version from Semantic Versioning)
         cache.set(recipe_url, response_data, version=1)
         return Response(response_data)
