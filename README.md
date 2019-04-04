@@ -30,6 +30,13 @@ $ python3 manage.py runserver
 
 Open your web browser, type ```localhost:8000``` and enter recipe url.
 
+## Running with docker
+
+```sh
+$ docker build -t nutrigo .
+$ docker run --rm -it -p 8080:8080 nutrigo
+```
+
 ## Supported websites
 
 So far the only supported websites are:
