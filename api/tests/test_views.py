@@ -2,6 +2,7 @@ import pytest
 from django.core.cache import cache
 from django.shortcuts import reverse
 from rest_framework.test import APIClient
+from core.recipe import recipe_sites
 
 client = APIClient()
 
@@ -52,3 +53,8 @@ def test_cache(settings):
     response = client.post(reverse("calculate-from-url"), {"url": url}, format="json")
     assert response.status_code == 200
     assert cache.get(url) is not None
+
+
+def test_recipe_websites_view(client):
+    data = client.get(reverse('recipe-websites-view'))
+    assert data.context['supported_websites'] == recipe_sites.keys()

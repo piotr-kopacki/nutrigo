@@ -7,11 +7,11 @@ SECURE_SSL_REDIRECT = True
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache_table',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': config('MEMCACHED_LOCATION'),
     }
 }
 
-ENV_PATH = os.path.abspath(os.path.dirname(__file__))
+ENV_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 STATIC_ROOT = os.path.join(ENV_PATH, '../public/static/') 
 MEDIA_ROOT = os.path.join(ENV_PATH, '../public/media/') 
