@@ -36,7 +36,7 @@ class RecipeSite:
                 'title': 'Recipe name',
                 'servings': 1,
                 'ingredients': [
-                    Ingredient('chicken breast'),
+                    'chicken breast',
                     ...
                 ]
             }
@@ -48,16 +48,10 @@ class RecipeSite:
             if self.language == "en"
             else utils.translate_list_of_ingredients(self.get_list_of_ingredients())
         )
-        matched_ingredients = []
-        for ing in ingredients:
-            try:
-                matched_ingredients.append(ingredient.Ingredient(ing))
-            except ingredient.IngredientError:
-                continue
         return {
             "title": title,
             "servings": servings,
-            "ingredients": matched_ingredients,
+            "ingredients": ingredients,
         }
 
     def get_recipe_title(self) -> str:

@@ -357,8 +357,26 @@ def separate_letters_from_numbers(string: str) -> str:
     Returns:
         String with separated letters and numbers.
     """
-    res = trim_whitespaces(" ".join(re.split('(\d+)', string)))
+    res = trim_whitespaces(" ".join(re.split(r'(\d+)', string)))
     return re.sub(r"(\d+)(?:\s)(\/|\.)(?:\s)(\d+)", r"\1\2\3", res)
+
+def split_and_ingredients(ingredient_list: list) -> list:
+    """Ingredients separated by 'and' are split into multiple ingredients.
+
+    Example:
+    >>> split_and_ingredients(['salt and pepper', 'water'])
+    ['salt', 'pepper', 'water']
+
+    Args:
+        ingredient_list: list of ingredients
+    Returns:
+        Corrected list of ingredients
+    """
+    ret = []
+    for ing in ingredient_list:
+        for ing_split in ing.split(" and "):
+            ret.append(ing_split)
+    return ret
 
 def get_domain_from_url(string: str) -> str:
     """Parses domain from url.

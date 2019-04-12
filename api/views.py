@@ -1,5 +1,6 @@
 import requests
 from django.core.cache import cache
+from django.conf import settings
 from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
@@ -8,15 +9,20 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core import utils
-from core.ingredient import (Ingredient, IngredientError,
-                             calculate_serving_nutrition,
-                             calculate_total_nutrition)
+from core.ingredient import (Ingredient, IngredientList, IngredientError)
 from core.recipe import recipe_sites
 
 
 class IndexView(TemplateView):
     template_name = "api/index.html"
 
+class RecipeWebsitesView(TemplateView):
+    template_name = "api/websites.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['supported_websites'] = recipe_sites.keys()
+        return context
 
 class CalculateFromURL(APIView):
     """
@@ -69,17 +75,17 @@ class CalculateFromURL(APIView):
         # Getting data
         # TODO: Catch exceptions and log them
         parsed = parser.get_data()
-        total_nutrition = calculate_total_nutrition(parsed['ingredients'])
-        serving_nutrition = calculate_serving_nutrition(total_nutrition, parsed['servings'])
+        ingredient_list = IngredientList(parsed['ingredients'])
         # Creating response
         response_data = {
             'url': recipe_url,
             'title': parsed['title'],
             'servings': parsed['servings'],
-            'total_nutrition': total_nutrition,
-            'serving_nutrition': serving_nutrition,
-            #'ingredients': [(ing.name, ing.weight, ing.matched_food.desc_long) for ing in parsed['ingredients']], # delete dis
+            'total_nutrition': ingredient_list.total_nutrition(),
+            'serving_nutrition': ingredient_list.total_nutrition(parsed['servings']),
         }
+        if settings.DEBUG:
+            response_data['ingredients'] = [(ing.matched_food.desc_long, ing.weight) for ing in ingredient_list.all]
         # Cache response
         # TODO: Add proper versioning for cache (e.g. version it using MINOR version from Semantic Versioning)
         cache.set(recipe_url, response_data, version=1)

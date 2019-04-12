@@ -34,6 +34,7 @@ common_names = {
     2047:   'Salt',
     2030:   'Pepper',  
     # Fruits and juices
+    9037:   'Avocado',
     9150:   'Lemon',
     9266:   'Pineapple',
     9316:   'Strawberry',
@@ -50,5 +51,8 @@ common_names = {
     # Beverages
     14555:  'Water',
     # Baked Products
+    18064:  'Bread',
     18363:  'Tortilla',
+    # Fats and Oils
+    4025:   'Mayonnaise',
 }

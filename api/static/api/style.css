@@ -6,7 +6,25 @@ h1 {
     text-shadow: 1px 1px 3px #000000;
 }
 
+h3 {
+    text-shadow: 1px 1px 3px #000000; 
+}
+
 body{
     background: url('bg-photo.jpg') no-repeat center center fixed;
     background-size: cover;
 }
+
+#spinnerContainer{
+    padding-left: 50%; 
+    padding-top: 5%;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.292);
+    text-align: center;
+  }

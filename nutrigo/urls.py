@@ -20,4 +20,5 @@ from api import views
 urlpatterns = [
     path("api/", views.CalculateFromURL.as_view(), name="calculate-from-url"),
     path("", views.IndexView.as_view(), name='index-view'),
+    path("websites/", views.RecipeWebsitesView.as_view(), name='recipe-websites-view'),
 ]

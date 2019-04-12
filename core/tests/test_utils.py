@@ -125,3 +125,7 @@ class TestUtils:
     def test_remove_or_ingredients(self):
         assert utils.remove_or_ingredients("1/2 small eggplant or a few mushrooms or half a small zucchini or half a pepper") == "1/2 small eggplant"
         assert utils.remove_or_ingredients("a small corn") == "a small corn"
+    
+    def test_split_and_ingredients(self):
+        assert utils.split_and_ingredients(['salt and pepper', 'water']) == ['salt', 'pepper', 'water']
+        assert utils.split_and_ingredients(['grand banana']) == ['grand banana']
