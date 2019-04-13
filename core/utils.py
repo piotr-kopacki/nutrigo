@@ -151,7 +151,7 @@ stop_words_re = "|".join(stop_words)
 stop_words_re = r"(?<!\S)(" + stop_words_re + r")(?!\S)"
 
 wnl = WordNetLemmatizer()
-wnl.lemmatize("", "n") # Call with dummy data to make nltk load WordNet on start
+wnl.lemmatize("", "n")  # Call with dummy data to make nltk load WordNet on start
 
 
 def trim_whitespaces(string: str) -> str:
@@ -184,7 +184,9 @@ def strip_special_chars(string: str) -> str:
     Returns:
         Stripped string.
     """
-    return trim_whitespaces(re.sub(r"([^a-zA-Z\s0-9/'-]+?)", "", string).replace("'s", ""))
+    return trim_whitespaces(
+        re.sub(r"([^a-zA-Z\s0-9/'-]+?)", "", string).replace("'s", "")
+    )
 
 
 def strip_stop_words(string: str) -> str:
@@ -239,12 +241,11 @@ def singularize(string: str) -> str:
         Singularized string.
     """
     ret = [
-        textblob.en.inflect.singularize(word)
-        if not is_singular(word)
-        else word
+        textblob.en.inflect.singularize(word) if not is_singular(word) else word
         for word in string.split()
     ]
     return " ".join(ret)
+
 
 def is_singular(string: str) -> str:
     """Checks if word is singular.
@@ -305,6 +306,7 @@ def is_measurement(string: str) -> bool:
     """
     return singularize(string) in measurements
 
+
 def is_measure_or_unit(string: str) -> bool:
     """Checks if string is a measurement or a unit
 
@@ -314,6 +316,7 @@ def is_measure_or_unit(string: str) -> bool:
         True if string is a measurement or a unit, False otherwise.
     """
     return is_measurement(string) or is_unit(string)
+
 
 def is_decimal_amount(string: str) -> bool:
     """Checks if string is a decimal amount (e.g. 1/2, 1/4, etc..)
@@ -328,6 +331,7 @@ def is_decimal_amount(string: str) -> bool:
     string_split = string.split("/")
     return string_split[0].isnumeric() and string_split[1].isnumeric()
 
+
 def remove_or_ingredients(string: str) -> str:
     """Removes any 'or' ingredients.
 
@@ -339,6 +343,7 @@ def remove_or_ingredients(string: str) -> str:
     if or_index != -1:
         return string[:or_index]
     return string
+
 
 def separate_letters_from_numbers(string: str) -> str:
     """Sperates letters and numbers in a string.
@@ -357,8 +362,9 @@ def separate_letters_from_numbers(string: str) -> str:
     Returns:
         String with separated letters and numbers.
     """
-    res = trim_whitespaces(" ".join(re.split(r'(\d+)', string)))
+    res = trim_whitespaces(" ".join(re.split(r"(\d+)", string)))
     return re.sub(r"(\d+)(?:\s)(\/|\.)(?:\s)(\d+)", r"\1\2\3", res)
+
 
 def split_and_ingredients(ingredient_list: list) -> list:
     """Ingredients separated by 'and' are split into multiple ingredients.
@@ -374,9 +380,22 @@ def split_and_ingredients(ingredient_list: list) -> list:
     """
     ret = []
     for ing in ingredient_list:
-        for ing_split in ing.split(" and "):
-            ret.append(ing_split)
+        if " and " in ing:
+            and_index = ing.index(" and ")
+            # Skip when 'and' suggests decimal amount e.g. '1 and half tbsp of sugar'
+            if (
+                ing[and_index - 1].isnumeric()
+                or is_decimal_amount(ing[and_index - 1])
+                or ing[and_index + 1].isnumeric()
+                or is_decimal_amount(ing[and_index + 1])
+            ):
+                ret.append(ing)
+            else:
+                ret.extend(ing.split(" and "))
+        else:
+            ret.append(ing)
     return ret
+
 
 def get_domain_from_url(string: str) -> str:
     """Parses domain from url.
@@ -396,11 +415,12 @@ def get_domain_from_url(string: str) -> str:
 def time_func(f):
     """Simple decorator to time functions"""
 
-    def wrap(*args, **kwargs): # pragma: no cover
+    def wrap(*args, **kwargs):  # pragma: no cover
         old = time.time()
         ret = f(*args, **kwargs)
         now = time.time()
         print("{:s} function took {:.3f} ms".format(f.__name__, (now - old) * 1000.0))
         return ret
 
-    return wrap # pragma: no cover
+    return wrap  # pragma: no cover
+

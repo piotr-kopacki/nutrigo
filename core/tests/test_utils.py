@@ -129,3 +129,5 @@ class TestUtils:
     def test_split_and_ingredients(self):
         assert utils.split_and_ingredients(['salt and pepper', 'water']) == ['salt', 'pepper', 'water']
         assert utils.split_and_ingredients(['grand banana']) == ['grand banana']
+        assert utils.split_and_ingredients(['2 and a half glasses of milk']) == ['2 and a half glasses of milk']
+        assert utils.split_and_ingredients(['2 and 1/2 glasses of milk']) == ['2 and 1/2 glasses of milk']
