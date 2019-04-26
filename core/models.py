@@ -21,7 +21,7 @@ class Food(models.Model):
     :cho_factor   - Factor for calculating calories from carbohydrate values
     """
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True, blank=True)
     raw_name = models.CharField(max_length=100)
     description = models.CharField(max_length=200, null=True, blank=True)
     common_name = models.CharField(max_length=100, null=True, blank=True)
