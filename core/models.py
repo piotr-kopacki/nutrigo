@@ -8,11 +8,13 @@ class Food(models.Model):
     :name         - 100-character name of product, should be concise 
                     (no adjectives etc.). It's the main field that will be 
                     used when matching ingredients from recipes to products from db.
+    :raw_name     - Original long description of product from USDA's database
     :description  - 200-character description of food item 
                     (e.g if it's raw or cooked, skin only, etc.)
     :common_name  - Other names commonly used to describe a food,
                     including local or regional names, such as “soda” or
-                    “pop” for “carbonated beverages”
+                    “pop” for “carbonated beverages”. May also be used to declare 
+                    default product for a category.
     :n_factor     - Factor for converting nitrogen to protein amounts
     :pro_factor   - Factor for calculating calories from protein amounts
     :fat_factor   - Factor for calculating calories from fat levels
@@ -20,6 +22,7 @@ class Food(models.Model):
     """
 
     name = models.CharField(max_length=100)
+    raw_name = models.CharField(max_length=100)
     description = models.CharField(max_length=200, null=True, blank=True)
     common_name = models.CharField(max_length=100, null=True, blank=True)
     n_factor = models.DecimalField(
