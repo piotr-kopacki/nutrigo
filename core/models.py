@@ -39,6 +39,8 @@ class Food(models.Model):
     )
 
     def __str__(self):  # pragma: no cover
+        if self.description:
+            return f"#{self.id} {self.name} [{self.description}]"
         return f"#{self.id} {self.name}"
 
 

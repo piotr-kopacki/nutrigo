@@ -6,57 +6,39 @@ from core import models, search, utils
 @pytest.mark.django_db
 class TestSearch:
     def test_match_one_weight(self):
-        food = models.Food.objects.create(desc_long="Chicken", desc_short="Chicken")
+        food = models.Food.objects.create(name="Chicken")
         sample_weight1 = models.FoodWeight.objects.create(
-            food=food, seq=1, amount=1, desc="pinch", weight=1
+            food=food, amount=1, desc="pinch", value=1
         )
         sample_weight2 = models.FoodWeight.objects.create(
-            food=food, seq=1, amount=1, desc="piece", weight=1
+            food=food, amount=1, desc="piece", value=1
         )
         # Chicken has no 'serving' weight so it should return last weight in the list
         assert search.match_one_weight(food, "serving") == food.weight.last()
         # Food with no weights should raise an Exception when matching weights
-        food_with_no_weights = models.Food.objects.create(
-            desc_long="Null", desc_short="Null"
-        )
+        food_with_no_weights = models.Food.objects.create(name="Null")
         with pytest.raises(AttributeError):
             search.match_one_weight(food_with_no_weights, "serving")
         assert search.match_one_weight(food, "pinch") == sample_weight1
 
     def test_match_one_food(self):
-        models.Food.objects.create(desc_long="Chicken", desc_short="Chicken")
-        assert isinstance(search.match_one_food("chicken"), models.Food)
-        assert search.match_one_food("yyyaaazzzttt") == []
+        food = models.Food.objects.create(name="Chicken")
+        assert search.match_one_food("chicken").id == food.id
+        assert search.match_one_food("") == None
 
     def test_common_name_prevalence(self):
-        food1 = models.Food.objects.create(desc_long="Salt", desc_short="Salt")
-        food2 = models.Food.objects.create(
-            desc_long="Salt", desc_short="Salt", common_name="Salt"
-        )
-        food3 = models.Food.objects.create(
-            desc_long="Salt, spice", desc_short="Salt, spice"
-        )
+        food1 = models.Food.objects.create(name="Salt")
+        food2 = models.Food.objects.create(name="Salt", common_name="Salt")
         assert search.match_one_food("Salt").id == food2.id
-        food1 = models.Food.objects.create(
-            desc_long="Chilli Pepper", desc_short="Pepper", common_name="Pepper, Chilli"
-        )
-        food2 = models.Food.objects.create(
-            desc_long="Chilli Pepper", desc_short="Pepper", common_name="Pepper"
-        )
-        match = search.match_food("Chilli")
-        assert match[0][0].id == food1.id
-        assert match[0][1] > match[1][1]
 
     def test_match_food(self):
-        models.Food.objects.create(desc_long="Chicken", desc_short="Chicken")
+        models.Food.objects.create(name="Chicken")
         res = search.match_food("chicken")
         assert isinstance(res, list)
         assert isinstance(res[0], tuple)
         assert isinstance(res[0][0], models.Food)
         assert isinstance(res[0][1], int)
-        assert search.match_food("yyyaaazzzttt") == []
-        with pytest.raises(ValueError):
-            assert search.match_food("")
+        assert search.match_food("") == []
 
     def test_parse_ingredient(self):
         assert search.parse_ingredient("chicken") == {

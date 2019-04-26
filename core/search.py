@@ -26,11 +26,11 @@ def match_food(string: str, n: int = 5) -> list:
         List of tuples: (Food, points) with points > 0.
     """
     if not string:
-        raise ValueError("String cannot be empty.")
+        return []
 
-    POINTS_PER_DESC_LONG = 3
-    POINTS_PER_DESC_SHORT = 2
-    POINTS_PER_COMMON_NAME = 1
+    POINTS_PER_NAME = 3
+    POINTS_ON_COMMON_NAME = 3
+    POINTS_PER_DESCRIPTION = 1
 
     string = string.casefold()
     string_split = set(string.split())
@@ -38,32 +38,26 @@ def match_food(string: str, n: int = 5) -> list:
     # Optimize query by adding filters
     filters = Q()
     for w in string_split:
-        filters = filters | Q(desc_long__icontains=w)
+        filters = filters | Q(name__icontains=w) | Q(common_name__icontains=w)
     food_list = Food.objects.filter(filters)
 
     result = []
     for food in food_list:
         points = sum(
             [
-                POINTS_PER_DESC_LONG
-                for word in string_split
-                if word in food.desc_long.casefold()
+                POINTS_PER_NAME
+                for word in food.name.casefold().split()
+                if word in string_split 
             ]
         )
-        if food.common_name:
-            points += sum(
-                [
-                    POINTS_PER_COMMON_NAME
-                    for word in string_split
-                    if word in food.common_name.casefold()
-                ]
-            )
+        if food.common_name and food.common_name.casefold() == string:
+            points += POINTS_ON_COMMON_NAME
         if points > 0:
             result.append((food, points))
     if not result:
-        return []
+        return result
     return sorted(
-        result, key=lambda tup: (tup[1], -len(tup[0].desc_long)), reverse=True
+        result, key=lambda tup: (tup[1], -len(tup[0].name)), reverse=True
     )[:n]
 
 
@@ -100,7 +94,7 @@ def match_one_food(string: str) -> Food:
         Food object.
     """
     res = match_food(string, n=1)
-    return res[0][0] if res else []
+    return res[0][0] if res else None
 
 
 def parse_ingredient(string: str) -> dict:

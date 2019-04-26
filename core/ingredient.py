@@ -125,12 +125,12 @@ class Ingredient():
     (172.0, 20.85, 9.25)
 
     Attributes:
+    :name   - name of ingredient
+    :weight - weight in grams
+    :matched_food - Food object from database
     :amount - amount of weight
     :unit   - unit (if parsed)
     :measurement - measurement (if parsed or no unit) e.g. slice, stick, batch, etc..
-    :name   - name of ingredient
-    :matched_food - Food object from database
-    :weight - weight in grams
     """
 
     def __init__(self, to_parse: str):
@@ -157,12 +157,12 @@ class Ingredient():
                 self.matched_food, f"This food doesn't have any FoodWeight objects."
             )
         matched_weight = search.match_one_weight(self.matched_food, self.measurement)
-        return float(matched_weight.weight) * (
+        return float(matched_weight.value) * (
             self.amount / float(matched_weight.amount)
         )
 
     def __repr__(self):  # pragma: no cover
-        return f"{self.weight:.2f} g of {self.matched_food.desc_long}"
+        return f"{self.weight:.2f} g of {self.matched_food.name}"
 
     def calc_nutrient(self, tagname: str) -> float:
         """

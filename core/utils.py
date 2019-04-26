@@ -349,7 +349,9 @@ def separate_letters_from_numbers(string: str) -> str:
     """Sperates letters and numbers in a string.
 
     Sperates letters and numbers in a string so cases like '1kg of chicken breast' are still valid for parser.
-    Leaves numbers separated by a '/' or '.' or '%' as they are.
+    Leaves untouched:
+    - numbers separated by a '/' or '.'
+    - percentages e.g 32% (beware that if a percentage number is provided with a space, it will be joined together)
     
     Example:
     >>> split_by_letters_and_numbers("abc1234abc 124-124")
