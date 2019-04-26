@@ -116,6 +116,8 @@ class TestUtils:
         assert utils.separate_letters_from_numbers("1 1/2") == "1 1/2"
         assert utils.separate_letters_from_numbers("1.2") == "1.2"
         assert utils.separate_letters_from_numbers("1/2 1.2 1") == "1/2 1.2 1"
+        assert utils.separate_letters_from_numbers("25%") == "25%"
+        assert utils.separate_letters_from_numbers("1/2 cup of 3.25% milk") == "1/2 cup of 3.25% milk"
     
     def test_get_domain_from_url(self):
         assert utils.get_domain_from_url("https://www.example.com/example/example.html") == "example.com"

@@ -349,7 +349,7 @@ def separate_letters_from_numbers(string: str) -> str:
     """Sperates letters and numbers in a string.
 
     Sperates letters and numbers in a string so cases like '1kg of chicken breast' are still valid for parser.
-    Leaves numbers separated by a '/' or '.' as they are.
+    Leaves numbers separated by a '/' or '.' or '%' as they are.
     
     Example:
     >>> split_by_letters_and_numbers("abc1234abc 124-124")
@@ -363,7 +363,9 @@ def separate_letters_from_numbers(string: str) -> str:
         String with separated letters and numbers.
     """
     res = trim_whitespaces(" ".join(re.split(r"(\d+)", string)))
-    return re.sub(r"(\d+)(?:\s)(\/|\.)(?:\s)(\d+)", r"\1\2\3", res)
+    res = re.sub(r"(\d+)(?:\s)(\/|\.)(?:\s)(\d+)", r"\1\2\3", res)
+    res = re.sub(r"(\d+)(?:\s)(%)", r"\1\2", res)
+    return res
 
 
 def split_and_ingredients(ingredient_list: list) -> list:
