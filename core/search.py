@@ -12,9 +12,9 @@ def match_food(string: str, n: int = 5) -> list:
 
     Very basic (but so far most effective) function to match a string to a Food object.
     It grants points by:
-        3 points for every word in Food's long description
-        2 points for every word in Food's short description (disabled for now)
-        1 point for every word in Food's common name
+        3 points for every matching word in Food's name
+        1 points for every matching word in Food's description
+        3 points if string is equal to Food's common name
     Then sorts the results by:
         1. Scored points (More is better)
         2. Length of long description (Less is better)
@@ -47,18 +47,24 @@ def match_food(string: str, n: int = 5) -> list:
             [
                 POINTS_PER_NAME
                 for word in food.name.casefold().split()
-                if word in string_split 
+                if word in string_split
             ]
         )
         if food.common_name and food.common_name.casefold() == string:
             points += POINTS_ON_COMMON_NAME
         if points > 0:
+            if food.description:
+                points += sum(
+                    [
+                        POINTS_PER_DESCRIPTION
+                        for word in food.description.casefold().split()
+                        if word in string_split
+                    ]
+                )
             result.append((food, points))
     if not result:
         return result
-    return sorted(
-        result, key=lambda tup: (tup[1], -len(tup[0].name)), reverse=True
-    )[:n]
+    return sorted(result, key=lambda tup: (tup[1], -len(tup[0].name)), reverse=True)[:n]
 
 
 def match_one_weight(food: Food, measurement: str) -> FoodWeight:
