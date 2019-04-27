@@ -2,7 +2,7 @@
 <p align="center">Calculate nutrition for your favourite recipe!</p>
 <p align="center">
   <img alt="Coveralls github branch" src="https://img.shields.io/coveralls/github/MakuZo/nutrigo/master.svg">
-<img alt="Travis (.com)" src="https://img.shields.io/travis/com/MakuZo/nutrigo.svg">
+<img alt="Travis (.com)" src="https://img.shields.io/travis/com/MakuZo/nutrigo/master.svg">
 </p>
 <p align="center">Try live <a href="https://nutrigo.makuzo.usermd.net">here</a></p>
 <p align="center">
