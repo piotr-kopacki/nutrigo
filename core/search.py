@@ -83,12 +83,20 @@ def match_one_weight(food: Food, measurement: str) -> FoodWeight:
     """
     if not food.weight.exists():
         raise AttributeError(f"{food} has no weights.")
-    weights = food.weight.filter()
+    weights = food.weight.all()
     matches = get_close_matches(measurement, [w.desc for w in weights], cutoff=0.5)
-    if not matches:
-        return food.weight.last()
-    else:
+    if matches:
         return weights.filter(desc=matches[0])[0]
+    # If couldn't match default measurement then try it's varations
+    if measurement == utils.DEFAULT_MEASUREMENT:
+        for def_measurement in utils.DEFAULT_MEASUREMENT_VARIATIONS:
+            for weight in weights:
+                if def_measurement == utils.singularize(weight.desc):
+                    matches.append(weight.desc)
+    if matches:
+        return weights.filter(desc=matches[0])[0]
+    else:
+        return food.weight.last()
 
 
 def match_one_food(string: str) -> Food:
@@ -151,6 +159,8 @@ def naive_parse_ingredient(string: str) -> dict:
     string = utils.remove_or_ingredients(string)
     string = utils.strip_stop_words(string)
     string = utils.convert_range_to_one_amount(string)
+    if not string: # Re-check in case of invalid strings like "$$" etc.
+        raise ValueError("String is not valid.")
     string_split = string.split()
 
     amount = 0

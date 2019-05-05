@@ -7,6 +7,15 @@ import textblob.translate
 from nltk.stem import WordNetLemmatizer
 
 DEFAULT_MEASUREMENT = "serving"
+DEFAULT_MEASUREMENT_VARIATIONS = {
+    'piece', 'fruit', 'bit', 'section', 'slice', 'chunk', 
+    'segment', 'lump', 'hunk', 'wedge', 'slab', 'knob', 
+    'block', 'cake', 'bar', 'tablet', 'brick', 'cube', 'stick', 
+    'length; offcut', 'sample', 'particle', 'fragment', 'flake', 
+    'sliver', 'splinter', 'wafer', 'chip', 'crumb', 'grain', 
+    'speck', 'scrap', 'remnant', 'shred', 'shard', 'snippet', 
+    'mite', 'mouthful', 'morsel'
+}
 
 # stop words taken from https://www.ranks.nl/stopwords
 # units and measures e.g. can, g, l, ml, etc.. are not included (removed from list)
@@ -142,7 +151,7 @@ measurements = {
     'dice', 'dollop', 'jar', 'lump', 'morsel', 'mouthful', 'nibble',
     'pat', 'pinch', 'plate', 'plateful', 'portion', 'punnet', 'ration', 'rind',
     'round', 'scrap', 'serving', 'slab', 'slice', 'tidbit',
-    'titbit', 'topping', 'mm', 'cm', 'm', 'inch'
+    'titbit', 'topping', 'mm', 'cm', 'm', 'inch', "small", "big", "large"
 }
 
 all_units = {unit for tup in units.values() for unit in tup}

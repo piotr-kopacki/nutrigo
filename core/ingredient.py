@@ -162,7 +162,7 @@ class Ingredient():
         )
 
     def __repr__(self):  # pragma: no cover
-        return f"{self.weight:.2f} g of {self.matched_food.name}"
+        return f"{self.weight:.2f} g of {self.matched_food}"
 
     def calc_nutrient(self, tagname: str) -> float:
         """
