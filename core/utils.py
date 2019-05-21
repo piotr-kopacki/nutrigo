@@ -226,7 +226,7 @@ def translate(string: str, from_lang: str = None) -> str:
     return translator.translate(string, to_lang="en")
 
 
-def translate_list_of_ingredients(ingredients: list, from_lang: str = None) -> str:
+def translate_many(ingredients: list, from_lang: str = None) -> list:
     """Translates list of ingredients into English.
 
     Args:
@@ -242,7 +242,7 @@ def translate_list_of_ingredients(ingredients: list, from_lang: str = None) -> s
 def singularize(string: str) -> str:
     """Singularizes words in string.
 
-    Uses singularize method from textblob module. Skips words from singularize_exceptions set.
+    Uses singularize method from textblob module.
     
     Args:
         string: A string to be singularized

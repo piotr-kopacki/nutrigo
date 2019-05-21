@@ -49,8 +49,8 @@ class TestUtils:
         with pytest.raises(textblob.exceptions.NotTranslated):
             utils.translate("kurczak", "en")
 
-    def test_translate_list_of_ingredients(self):
-        assert utils.translate_list_of_ingredients(['kurczak', 'cebula'], "pl") == ['chicken', 'onion']
+    def test_translate_many(self):
+        assert utils.translate_many(['kurczak', 'cebula'], "pl") == ['chicken', 'onion']
 
     def test_convert_range_to_one_amount(self):
         assert utils.convert_range_to_one_amount('100 - 200 g of chicken breast') == "200 g of chicken breast"
