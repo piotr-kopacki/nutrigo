@@ -46,7 +46,7 @@ class RecipeSite:
         ingredients = (
             self.get_list_of_ingredients()
             if self.language == "en"
-            else utils.translate_list_of_ingredients(self.get_list_of_ingredients())
+            else utils.translate_many(self.get_list_of_ingredients())
         )
         return {
             "title": title,

@@ -64,7 +64,7 @@ def match_food(string: str, n: int = 5) -> list:
             result.append((food, points))
     if not result:
         return result
-    return sorted(result, key=lambda tup: (tup[1], -len(tup[0].name)), reverse=True)[:n]
+    return sorted(result, key=lambda tup: (tup[1], -len(tup[0].name), -len(tup[0].description)), reverse=True)[:n]
 
 
 def match_one_weight(food: Food, measurement: str) -> FoodWeight:
