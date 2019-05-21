@@ -23,7 +23,7 @@ class Food(models.Model):
 
     name = models.CharField(max_length=100, null=True, blank=True)
     raw_name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200, null=True, blank=True)
+    description = models.CharField(max_length=200, null=False, default="")
     common_name = models.CharField(max_length=100, null=True, blank=True)
     n_factor = models.DecimalField(
         max_digits=4, decimal_places=2, null=True, blank=True
