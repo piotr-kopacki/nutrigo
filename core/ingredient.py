@@ -148,7 +148,7 @@ class Ingredient():
         else:
             self.weight = self.get_weight()
 
-    def get_weight(self):
+    def get_weight(self) -> float:
         """
         Returns weight (in grams).
         """
@@ -188,49 +188,49 @@ class Ingredient():
             return None
 
     @property
-    def energy(self):
+    def energy(self) -> float:
         return self.calc_nutrient("ENERC_KCAL")
 
     @property
-    def protein(self):
+    def protein(self) -> float:
         return self.calc_nutrient("PROCNT")
 
     @property
-    def fat(self):
+    def fat(self) -> float:
         return self.calc_nutrient("FAT")
 
     @property
-    def fat_sat(self):
+    def fat_sat(self) -> float:
         return self.calc_nutrient("FASAT")
 
     @property
-    def fat_poly(self):
+    def fat_poly(self) -> float:
         return self.calc_nutrient("FAPU")
 
     @property
-    def fat_mono(self):
+    def fat_mono(self) -> float:
         return self.calc_nutrient("FAMS")
 
     @property
-    def carb(self):
+    def carb(self) -> float:
         return self.calc_nutrient("CHOCDF")
 
     @property
-    def sugar(self):
+    def sugar(self) -> float:
         return self.calc_nutrient("SUGAR")
 
     @property
-    def chol(self):
+    def chol(self) -> float:
         return self.calc_nutrient("CHOLE")
 
     @property
-    def sodium(self):
+    def sodium(self) -> float:
         return self.calc_nutrient("NA")
 
     @property
-    def potas(self):
+    def potas(self) -> float:
         return self.calc_nutrient("K")
 
     @property
-    def fiber(self):
+    def fiber(self) -> float:
         return self.calc_nutrient("FIBTG")
