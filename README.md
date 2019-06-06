@@ -34,7 +34,7 @@ Open your web browser, type ```localhost:8000``` and enter recipe url.
 
 ```sh
 $ docker build -t nutrigo .
-$ docker run --rm -it -p 8080:8080 nutrigo
+$ docker run --rm -it -p 8000:8000 nutrigo
 ```
 
 ## Supported websites
