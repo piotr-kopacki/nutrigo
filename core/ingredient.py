@@ -45,7 +45,7 @@ class IngredientError(Exception):
 
 class IngredientList():
     """Parses and stores data about ingredients.
-    
+
     Class which does everything needed for getting nutrition data.
     Use this class to generate data for your recipe.
     """
@@ -67,7 +67,7 @@ class IngredientList():
 
     def total_nutrition(self, servings: int = 1) -> dict:
         """Returns total nutrition.
-        
+
         Values are rounded with 2 digit precision.
 
         Args:
@@ -111,9 +111,10 @@ class IngredientList():
 
 class Ingredient():
     """Parses and stores data about an ingredient.
-    
+
     Class which parses ingredient and stores data about it's weight, amount, nutrition, etc..
-    Raises IngredientError if parser couldn't match a Food in database or Food doesn't have any FoodWeight to be selected.
+    Raises IngredientError if parser couldn't match a Food in database or Food doesn't have any 
+    FoodWeight to be selected.
 
     Example usage:
     >>> ing = Ingredient("100 g of chicken breast")
@@ -168,10 +169,10 @@ class Ingredient():
         """
         Calculates nutrient amount for ingredient's weight
 
-        Args: 
+        Args:
             tagname: International Network of Food Data Systems tagname
-        Returns: 
-            Amount of nutrient (in it's corresponding unit) for self.weight 
+        Returns:
+            Amount of nutrient (in it's corresponding unit) for self.weight
         """
         nutrient = self.get_nutrient_by_tagname(tagname)
         if not nutrient:
