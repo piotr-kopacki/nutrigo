@@ -180,9 +180,9 @@ def trim_whitespaces(string: str) -> str:
     return re.sub(r"\s+", " ", string).strip()
 
 
-def strip_special_chars(string: str) -> str:
+def strip_special_chars(string: str, whitelist: list=['%', '/', '\-', "'"]) -> str:
     # TODO: convert words with hyphen into separate words
-    """Removes all special characters except forward slash from a word. Also removes " 's " from word.
+    """Removes all special characters except chars from whitelist from a word. Also removes " 's " from word.
     
     Example:
     >>> strip_special_chars("1/2 chicken's leg (boneless and skinless)")
@@ -193,8 +193,11 @@ def strip_special_chars(string: str) -> str:
     Returns:
         Stripped string.
     """
+    # In case whitelist was a None
+    if not whitelist:
+        whitelist = []
     return trim_whitespaces(
-        re.sub(r"([^a-zA-Z\s0-9/'-]+?)", "", string).replace("'s", "")
+        re.sub("([^a-zA-Z\s0-9{}]+?)".format("".join(whitelist)), "", string).replace("'s", "")
     )
 
 

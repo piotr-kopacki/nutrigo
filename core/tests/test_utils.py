@@ -19,7 +19,7 @@ class TestUtils:
         )
 
     def test_strip_special_chars(self):
-        assert utils.strip_special_chars(r"!@#$%^&*()_+-=[];\,./'{}|:<>?") == "-/'"
+        assert utils.strip_special_chars(r"!@#$%^&*()_+-=[];\,./'{}|:<>?") == "%-/'"
         assert utils.strip_special_chars(
             "4 boiled eggs 1/2 broccoli 1 small onion 4 plasters of dried ham or "
             "bacon 50 g cheese 1 teaspoon of mustard 2 raw eggs 1 tablespoon "
@@ -35,6 +35,7 @@ class TestUtils:
             utils.strip_special_chars("1/2 chickens leg (boneless and skinless)")
             == "1/2 chickens leg boneless and skinless"
         )
+        assert utils.strip_special_chars(r"!@#$%^&*()_+-=[];\,./'{}|:<>?", []) == ""
 
     def test_trim_whitespaces(self):
         assert utils.trim_whitespaces("hello     friend") == "hello friend"
