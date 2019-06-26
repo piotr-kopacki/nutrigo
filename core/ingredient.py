@@ -55,6 +55,7 @@ class IngredientList:
     def __init__(self, ingredient_list: list, parser: Callable[[str], dict] = search.parse_ingredient):
         """
         :ingredient_list - list of ingredients
+        :parser - parser which handles user input (ingredient name)
         """
         self.raw = ingredient_list
         self.all = []
