@@ -8,7 +8,7 @@ from core.models import Food, FoodWeight
 
 
 def match_food(string: str, n: int = 5) -> list:
-    """Finds most matching Food to a string.
+    """Finds most matching Food from database to a string.
 
     Very basic (but so far most effective) function to match a string to a Food object.
     It grants points by:
@@ -64,13 +64,18 @@ def match_food(string: str, n: int = 5) -> list:
             result.append((food, points))
     if not result:
         return result
-    return sorted(result, key=lambda tup: (tup[1], -len(tup[0].name), -len(tup[0].description)), reverse=True)[:n]
+    return sorted(
+        result,
+        key=lambda tup: (tup[1], -len(tup[0].name), -len(tup[0].description)),
+        reverse=True,
+    )[:n]
 
 
 def match_one_weight(food: Food, measurement: str) -> FoodWeight:
     """Finds best matching weight (FoodWeight object) to a measurement.
 
-    Most of Food objects have common Weight entries, so this function uses difflib.get_close_matches() to find the most matching to the ingredient unit.
+    Most of Food objects have common Weight entries, so this function uses difflib.get_close_matches()
+    to find the most matching to the ingredient unit.
     If there's no match, returns last Weight in the list.
 
     Args:
@@ -118,10 +123,11 @@ def parse_ingredient(string: str) -> dict:
         string: A string to be parsed.
     Returns:
         Dictionary:
-            'amount': float 
+            'amount': float
             'unit': str (may be empty)
             'measurement': str (may be empty) 
             'name': str
+            'input': str
     Raises:
         ValueError: When string is empty.
     """
@@ -131,8 +137,9 @@ def parse_ingredient(string: str) -> dict:
 def naive_parse_ingredient(string: str) -> dict:
     """Parses string and returns unit, amount, measurement and name of ingredient
 
-    It is a very basic and naive implementation of parsing a string (ingredient). Based on simple checks if
-    string starts with an amount or with a unit, etc. Ideally would be implemented with CRF (e.g. using PyStruct).
+    It is a very basic and naive implementation of parsing a string (ingredient).
+    Based on simple checks ifstring starts with an amount or with a unit, etc.
+    Ideally would be implemented with CRF (e.g. using PyStruct).
 
     Usage example:
     >>> parse_ingredient("1 onion")
@@ -145,7 +152,7 @@ def naive_parse_ingredient(string: str) -> dict:
         string: A string to be parsed.
     Returns:
         Dictionary:
-            'amount': float 
+            'amount': float
             'unit': str (may be empty)
             'measurement': str (may be empty) 
             'name': str
@@ -159,7 +166,7 @@ def naive_parse_ingredient(string: str) -> dict:
     string = utils.remove_or_ingredients(string)
     string = utils.strip_stop_words(string)
     string = utils.convert_range_to_one_amount(string)
-    if not string: # Re-check in case of invalid strings like "$$" etc.
+    if not string:  # Re-check in case of invalid strings like "$$" etc.
         raise ValueError("String is not valid.")
     string_split = string.split()
 
