@@ -127,7 +127,7 @@ def parse_ingredient(string: str) -> dict:
             'unit': str (may be empty)
             'measurement': str (may be empty) 
             'name': str
-            'input': str
+            'raw': str
     Raises:
         ValueError: When string is empty.
     """
@@ -138,15 +138,15 @@ def naive_parse_ingredient(string: str) -> dict:
     """Parses string and returns unit, amount, measurement and name of ingredient
 
     It is a very basic and naive implementation of parsing a string (ingredient).
-    Based on simple checks ifstring starts with an amount or with a unit, etc.
+    Based on simple checks if string starts with an amount or with a unit, etc.
     Ideally would be implemented with CRF (e.g. using PyStruct).
 
     Usage example:
     >>> parse_ingredient("1 onion")
-    {'amount': 1.0, 'unit': '', 'measurement': 'serving', 'name': 'onion'}
+    {'amount': 1.0, 'unit': '', 'measurement': 'serving', 'name': 'onion', 'raw': '1 onion'}
 
     >>> parse_ingredient("150 grams of chicken breasts (boneless and skinless)")
-    {'amount': 150.0, 'unit': 'g', 'measurement': '', 'name': 'chicken breast boneless skinless'}
+    {'amount': 150.0, 'unit': 'g', 'measurement': '', 'name': 'chicken breast boneless skinless', 'raw': '150 grams of chicken breasts (boneless and skinless)'}
 
     Args:
         string: A string to be parsed.
@@ -154,13 +154,15 @@ def naive_parse_ingredient(string: str) -> dict:
         Dictionary:
             'amount': float
             'unit': str (may be empty)
-            'measurement': str (may be empty) 
+            'measurement': str (may be empty)
             'name': str
+            'raw': str
     Raises:
         ValueError: When string is empty.
     """
     if not string:
         raise ValueError("String cannot be empty.")
+    raw = string
     string = utils.strip_special_chars(string)
     string = utils.separate_letters_from_numbers(string)
     string = utils.remove_or_ingredients(string)
@@ -244,4 +246,5 @@ def naive_parse_ingredient(string: str) -> dict:
         "unit": unit,
         "measurement": measurement,
         "name": name,
+        "raw": raw,
     }

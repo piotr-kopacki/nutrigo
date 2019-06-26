@@ -131,6 +131,7 @@ class Ingredient():
     :matched_food - Food object from database
     :amount - amount of weight
     :unit   - unit (if parsed)
+    :raw_input - original string which was used to find matched_food (user input)
     :measurement - measurement (if parsed or no unit) e.g. slice, stick, batch, etc..
     """
 
@@ -138,7 +139,7 @@ class Ingredient():
         """
         :to_parse - ingredient name
         """
-        self.amount, self.unit, self.measurement, self.name = search.parse_ingredient(
+        self.amount, self.unit, self.measurement, self.name, self.raw_input = search.parse_ingredient(
             to_parse
         ).values()
         self.matched_food = search.match_one_food(self.name)

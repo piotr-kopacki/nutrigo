@@ -46,36 +46,42 @@ class TestSearch:
             "unit": "",
             "measurement": utils.DEFAULT_MEASUREMENT,
             "name": "chicken",
+            "raw": "chicken",
         }
         assert search.parse_ingredient("1 chicken breast") == {
             "amount": 1,
             "unit": "",
             "measurement": utils.DEFAULT_MEASUREMENT,
             "name": "chicken breast",
+            "raw": "1 chicken breast",
         }
         assert search.parse_ingredient("slice of bread") == {
             "amount": 1,
             "unit": "",
             "measurement": "slice",
             "name": "bread",
+            "raw": "slice of bread",
         }
         assert search.parse_ingredient("1 1/2 cup of water") == {
             "amount": 1.5,
             "unit": "cup",
             "measurement": "",
             "name": "water",
+            "raw": "1 1/2 cup of water",
         }
         assert search.parse_ingredient("1/2 cup of water") == {
             "amount": 0.5,
             "unit": "cup",
             "measurement": "",
             "name": "water",
+            "raw": "1/2 cup of water",
         }
         assert search.parse_ingredient("4 (1/2 pound) beef cube steaks") == {
             "amount": 4.5,
             "unit": "lb",
             "measurement": "",
             "name": "beef cube steak",
+            "raw": "4 (1/2 pound) beef cube steaks",
         }
         assert search.parse_ingredient(
             "3 cups vegetable shortening for deep frying"
@@ -84,42 +90,49 @@ class TestSearch:
             "unit": "cup",
             "measurement": "",
             "name": "vegetable shortening deep frying",
+            "raw": "3 cups vegetable shortening for deep frying"
         }
         assert search.parse_ingredient("1/4 cup all-purpose flour") == {
             "amount": 0.25,
             "unit": "cup",
             "measurement": "",
             "name": "all-purpose flour",
+            "raw": "1/4 cup all-purpose flour",
         }
         assert search.parse_ingredient("1 1/2 tablespoons Worcestershire sauce") == {
             "amount": 1.5,
             "unit": "tbsp",
             "measurement": "",
             "name": "Worcestershire sauce",
+            "raw": "1 1/2 tablespoons Worcestershire sauce",
         }
         assert search.parse_ingredient("1 1/2 slice of onion") == {
             "amount": 1.5,
             "unit": "",
             "measurement": "slice",
             "name": "onion",
+            "raw": "1 1/2 slice of onion",
         }
         assert search.parse_ingredient("1/2 slice of onion") == {
             "amount": 0.5,
             "unit": "",
             "measurement": "slice",
             "name": "onion",
+            "raw": "1/2 slice of onion"
         }
         assert search.parse_ingredient("slice of ham") == {
             "amount": 1,
             "unit": "",
             "measurement": "slice",
             "name": "ham",
+            "raw": "slice of ham",
         }
         assert search.parse_ingredient("g of ham") == {
             "amount": 1,
             "unit": "g",
             "measurement": "",
             "name": "ham",
+            "raw": "g of ham",
         }
         assert search.parse_ingredient(
             "1 dash hot pepper sauce (such as Frank's RedHot®), or to taste"
@@ -128,24 +141,28 @@ class TestSearch:
             "unit": "",
             "measurement": "dash",
             "name": "hot pepper sauce Frank RedHot",
+            "raw": "1 dash hot pepper sauce (such as Frank's RedHot®), or to taste"
         }
         assert search.parse_ingredient("1 1/2 apples") == {
             "amount": 1.5,
             "unit": "",
             "measurement": utils.DEFAULT_MEASUREMENT,
             "name": "apple",
+            "raw": "1 1/2 apples",
         }
         assert search.parse_ingredient("1/2 red onion") == {
             "amount": 0.5,
             "unit": "",
             "measurement": utils.DEFAULT_MEASUREMENT,
             "name": "red onion",
+            "raw": "1/2 red onion",
         }
         assert search.parse_ingredient("1kg of chicken breasts") == {
             "amount": 1,
             "unit": "kg",
             "measurement": "",
             "name": "chicken breast",
+            "raw": "1kg of chicken breasts",
         }
         with pytest.raises(ValueError):
             search.parse_ingredient("")
