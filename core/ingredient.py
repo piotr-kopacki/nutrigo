@@ -1,4 +1,6 @@
 from core import models, search, utils
+from typing import Callable
+
 
 to_tagname = {
     "ENERGY": "ENERC_KCAL",
@@ -43,7 +45,7 @@ class IngredientError(Exception):
         self.message = message
 
 
-class IngredientList():
+class IngredientList:
     """Parses and stores data about ingredients.
 
     Class which does everything needed for getting nutrition data.
@@ -106,10 +108,13 @@ class IngredientList():
             total_nutrition[k] = (round(v, 2), units[k])
 
         if servings > 1:
-            return {k: (round(t[0] / servings, 2), t[1]) for k, t in total_nutrition.items()}
+            return {
+                k: (round(t[0] / servings, 2), t[1]) for k, t in total_nutrition.items()
+            }
         return total_nutrition
 
-class Ingredient():
+
+class Ingredient:
     """Parses and stores data about an ingredient.
 
     Class which parses ingredient and stores data about it's weight, amount, nutrition, etc..
@@ -135,11 +140,14 @@ class Ingredient():
     :measurement - measurement (if parsed or no unit) e.g. slice, stick, batch, etc..
     """
 
-    def __init__(self, to_parse: str):
+    def __init__(
+        self, to_parse: str, parser: Callable[[str], dict] = search.parse_ingredient
+    ):
         """
         :to_parse - ingredient name
+        :parser - parser which handles user input (ingredient name)
         """
-        self.amount, self.unit, self.measurement, self.name, self.raw_input = search.parse_ingredient(
+        self.amount, self.unit, self.measurement, self.name, self.raw_input = parser(
             to_parse
         ).values()
         self.matched_food = search.match_one_food(self.name)
