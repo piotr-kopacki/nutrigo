@@ -52,20 +52,20 @@ class IngredientList:
     Use this class to generate data for your recipe.
     """
 
-    def __init__(self, ingredient_list: list):
+    def __init__(self, ingredient_list: list, parser: Callable[[str], dict] = search.parse_ingredient):
         """
         :ingredient_list - list of ingredients
         """
         self.raw = ingredient_list
         self.all = []
+        self.bad = []
 
         ingredient_list = utils.split_and_ingredients(ingredient_list)
         for ing in ingredient_list:
             try:
-                self.all.append(Ingredient(ing))
+                self.all.append(Ingredient(ing, parser=parser))
             except IngredientError:
-                # Maybe add fail count? Could be used for statistics or anything else...
-                continue
+                self.bad.append(ing)
 
     def total_nutrition(self, servings: int = 1) -> dict:
         """Returns total nutrition.

@@ -39,6 +39,17 @@ class TestSearch:
         assert isinstance(res[0][0], models.Food)
         assert isinstance(res[0][1], int)
         assert search.match_food("") == []
+    
+    def test_match_food_with_description(self):
+        """Ensure that foods description is taken into account when matching"""
+        f1 = models.Food.objects.create(name="Pepper", description="red")
+        f2 = models.Food.objects.create(name="Pepper", description="green")
+        assert search.match_food("green pepper")[0][0].id == f2.id
+    
+    def test_parse_ingredient_handles_bad_input(self):
+        """Ensure that parse_ingredient raises ValueError when given bad input (like '$$')"""
+        with pytest.raises(ValueError):
+            assert search.parse_ingredient("$$")
 
     def test_parse_ingredient(self):
         assert search.parse_ingredient("chicken") == {

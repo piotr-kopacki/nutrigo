@@ -8,5 +8,6 @@ omit=
   *srlegacy/*,
   manage.py,
   *wsgi.py
+  .env/*
 source=
     core/
