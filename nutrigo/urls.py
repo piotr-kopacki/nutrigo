@@ -18,7 +18,7 @@ from django.urls import path
 from api import views
 
 urlpatterns = [
-    path("api/", views.CalculateFromURL.as_view(), name="calculate-from-url"),
+    path("api/calculate/url", views.CalculateFromURL.as_view(), name="calculate-from-url"),
+    path("api/calculate/text", views.CalculateFromText.as_view(), name="calculate-from-text"),
     path("", views.IndexView.as_view(), name='index-view'),
-    path("websites/", views.RecipeWebsitesView.as_view(), name='recipe-websites-view'),
 ]

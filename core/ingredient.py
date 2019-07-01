@@ -7,7 +7,6 @@ to_tagname = {
     "FAT": "FAT",
     "PROTEIN": "PROCNT",
     "CARB": "CHOCDF",
-    # The rest
     "FAT_SAT": "FASAT",
     "FAT_POLY": "FAPU",
     "FAT_MONO": "FAMS",
@@ -38,7 +37,7 @@ units = {
 
 
 class IngredientError(Exception):
-    """Exception raised when parsing ingredient fails."""
+    """Exception raised when creating Ingredient object fails."""
 
     def __init__(self, to_parse, message):
         self.to_parse = to_parse
@@ -67,6 +66,8 @@ class IngredientList:
                 self.all.append(Ingredient(ing, parser=parser))
             except IngredientError:
                 self.bad.append(ing)
+            except search.ParseIngredientError:
+                self.bad.append(ing)
 
     def total_nutrition(self, servings: int = 1) -> dict:
         """Returns total nutrition.
@@ -76,23 +77,21 @@ class IngredientList:
         Args:
             servings: count of servings
         Returns:
-            Dictionary with nutrition name as a key and tuple of amount and unit as value, e.g.
+            Dictionary with nutrient name as a key and tuple of value, value (per serving) and unit, e.g.
             {
-                'PROTEIN': (127.21, 'g'),
-                'FAT': (124.13, 'g'),
+                'PROTEIN': (127.21, 31.80, 'g'),
+                'FAT': (124.13, 31.03, 'g'),
                 ...
             }
         """
         total_nutrition = {
-            # Big 4
             "ENERGY": 0,
             "FAT": 0,
             "PROTEIN": 0,
             "CARB": 0,
-            # The rest
-            # "FAT_SAT": 0,
-            # "FAT_POLY": 0,
-            # "FAT_MONO": 0,
+            "FAT_SAT": 0,
+            "FAT_POLY": 0,
+            "FAT_MONO": 0,
             "SUGAR": 0,
             "CHOLE": 0,
             "SODIUM": 0,
@@ -106,12 +105,8 @@ class IngredientList:
                     total_nutrition[n] += calculated
         # Round results and create a tuple with value and unit
         for k, v in total_nutrition.items():
-            total_nutrition[k] = (round(v, 2), units[k])
-
-        if servings > 1:
-            return {
-                k: (round(t[0] / servings, 2), t[1]) for k, t in total_nutrition.items()
-            }
+            total_nutrition[k] = (round(v, 2), round(v / servings, 2), units[k])
+            
         return total_nutrition
 
 

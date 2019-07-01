@@ -21,6 +21,17 @@ class TestSearch:
             search.match_one_weight(food_with_no_weights, "serving")
         assert search.match_one_weight(food, "pinch") == sample_weight1
 
+    def test_match_one_weight_returns_last_if_no_match(self):
+        """Ensure that if match_one_weight can't match a weight it returns last in the list"""
+        f = models.Food.objects.create(name="Chicken")
+        w1 = models.FoodWeight.objects.create(
+            food=f, amount=1, desc="pinch", value=1
+        )
+        w2 = models.FoodWeight.objects.create(
+            food=f, amount=1, desc="cup", value=1
+        )
+        assert search.match_one_weight(f, 'teaspoon').id == w2.id
+
     def test_match_one_food(self):
         food = models.Food.objects.create(name="Chicken")
         assert search.match_one_food("chicken").id == food.id
@@ -48,7 +59,7 @@ class TestSearch:
     
     def test_parse_ingredient_handles_bad_input(self):
         """Ensure that parse_ingredient raises ValueError when given bad input (like '$$')"""
-        with pytest.raises(ValueError):
+        with pytest.raises(search.ParseIngredientError):
             assert search.parse_ingredient("$$")
 
     def test_parse_ingredient(self):
@@ -175,5 +186,5 @@ class TestSearch:
             "name": "chicken breast",
             "raw": "1kg of chicken breasts",
         }
-        with pytest.raises(ValueError):
+        with pytest.raises(search.ParseIngredientError):
             search.parse_ingredient("")

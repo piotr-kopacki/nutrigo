@@ -7,6 +7,14 @@ from core import utils
 from core.models import Food, FoodWeight
 
 
+class ParseIngredientError(Exception):
+    """Exception raised when parsing ingredient fails."""
+
+    def __init__(self, to_parse, message):
+        self.to_parse = to_parse
+        self.message = message
+
+
 def match_food(string: str, n: int = 5) -> list:
     """Finds most matching Food from database to a string.
 
@@ -158,10 +166,10 @@ def naive_parse_ingredient(string: str) -> dict:
             'name': str
             'raw': str
     Raises:
-        ValueError: When string is empty.
+        ParseIngredientError: When string is empty.
     """
     if not string:
-        raise ValueError("String cannot be empty.")
+        raise ParseIngredientError(string, "String cannot be empty.")
     raw = string
     string = utils.strip_special_chars(string)
     string = utils.separate_letters_from_numbers(string)
@@ -169,7 +177,7 @@ def naive_parse_ingredient(string: str) -> dict:
     string = utils.strip_stop_words(string)
     string = utils.convert_range_to_one_amount(string)
     if not string:  # Re-check in case of invalid strings like "$$" etc.
-        raise ValueError("String is not valid.")
+        raise ParseIngredientError(raw, "String is not valid.")
     string_split = string.split()
 
     amount = 0
