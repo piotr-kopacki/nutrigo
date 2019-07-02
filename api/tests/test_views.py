@@ -2,6 +2,7 @@ import pytest
 from django.core.cache import cache
 from django.shortcuts import reverse
 from rest_framework.test import APIClient
+
 from core.recipe import recipe_sites
 
 client = APIClient()

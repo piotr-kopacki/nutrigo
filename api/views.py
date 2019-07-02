@@ -1,13 +1,13 @@
 import requests
-from django.core.cache import cache
 from django.conf import settings
+from django.core.cache import cache
 from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core import utils
-from core.ingredient import Ingredient, IngredientList, IngredientError
+from core.ingredient import Ingredient, IngredientError, IngredientList
 from core.recipe import recipe_sites
 
 
