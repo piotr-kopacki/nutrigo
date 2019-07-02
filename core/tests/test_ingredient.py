@@ -114,4 +114,3 @@ class TestIngredientList:
         ings = ingredient.IngredientList(["$$"])
         assert ings.bad[0] == "$$"
         assert len(ings.bad) == 1
-

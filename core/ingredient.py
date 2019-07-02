@@ -1,6 +1,6 @@
-from core import models, search, utils
 from typing import Callable
 
+from core import models, search, utils
 
 to_tagname = {
     "ENERGY": "ENERC_KCAL",
@@ -51,7 +51,11 @@ class IngredientList:
     Use this class to generate data for your recipe.
     """
 
-    def __init__(self, ingredient_list: list, parser: Callable[[str], dict] = search.parse_ingredient):
+    def __init__(
+        self,
+        ingredient_list: list,
+        parser: Callable[[str], dict] = search.parse_ingredient,
+    ):
         """
         :ingredient_list - list of ingredients
         :parser - parser which handles user input (ingredient name)
@@ -106,7 +110,7 @@ class IngredientList:
         # Round results and create a tuple with value and unit
         for k, v in total_nutrition.items():
             total_nutrition[k] = (round(v, 2), round(v / servings, 2), units[k])
-            
+
         return total_nutrition
 
 

@@ -1,10 +1,7 @@
 """
 Script which imports data from USDA's National Nutrient Database for Standard Reference
 """
-from core.srlegacy import food
-from core.srlegacy import nutrition
-from core.srlegacy import weight
-from core.srlegacy import correct_weights
+from core.srlegacy import correct_weights, food, nutrition, weight
 
 PATH_TO_FOOD = "FOOD_DES.txt"
 PATH_TO_WEIGHT = "WEIGHT.txt"

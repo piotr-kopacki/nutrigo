@@ -439,4 +439,3 @@ def time_func(f):
         return ret
 
     return wrap  # pragma: no cover
-

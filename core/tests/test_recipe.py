@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from core.recipe import RecipeSite, recipe_sites, KwestiaSmaku
+from core.recipe import KwestiaSmaku, RecipeSite, recipe_sites
 
 
 class TestRecipe:
