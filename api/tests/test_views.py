@@ -81,9 +81,6 @@ class TestCalculateFromTextApiView:
     
     def test_return_200_when_valid_ingredients(self):
         """Ensure that view can return HTTP 200 when given valid ingredients"""
-        # string
-        response = self.client.post(self.url, {"ingredients": "abc"}, format="json")
-        assert response.status_code == 200
         # list
         response = self.client.post(self.url, {"ingredients": ["abc"]}, format="json")
         assert response.status_code == 200
@@ -93,9 +90,6 @@ class TestCalculateFromTextApiView:
     
     def test_view_splits_ingredients_correctly(self):
         """Ensure that ingredients are split according to the type"""
-        # string
-        response = self.client.post(self.url, {"ingredients": "abc\ndef"}, format="json")
-        assert response.data["ingredients"] == ["abc", "def"]
         # list
         response = self.client.post(self.url, {"ingredients": ["abc", "def"]}, format="json")
         assert response.data["ingredients"] == ["abc", "def"]

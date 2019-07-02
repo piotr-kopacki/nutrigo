@@ -10,6 +10,8 @@ from core import utils
 from core.ingredient import Ingredient, IngredientError, IngredientList
 from core.recipe import recipe_sites
 
+from api.serializers import IngredientsSerializer
+
 
 class IndexView(TemplateView):
     template_name = "api/calc_from_text.html"
@@ -34,46 +36,25 @@ class CalculateFromText(APIView):
                 :unit - unit of nutrient
     """
 
+    serializer_class = IngredientsSerializer
+
     def post(self, request):
-        errors = self.validate(request)
-        if errors:
-            return Response({"error": errors}, status=status.HTTP_400_BAD_REQUEST)
-        input = request.data.get("ingredients")
-        if not isinstance(input, list):
-            input = input.split("\n")
-        ingredients = IngredientList(input)
+        """Returns nutritional analysis for recipe"""
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
         servings = request.data.get("servings", 1)
+        user_ingr = request.data.get("ingredients")
+        ingredients = IngredientList(user_ingr)
         response_data = {
-            "ingredients": input,
+            "ingredients": user_ingr,
             "bad": ingredients.bad,
             "servings": servings,
             "nutrition": ingredients.total_nutrition(servings),
         }
         return Response(response_data)
-
-    def validate(self, request):
-        """Validates request parameters.
-        Args:
-            :request - request to validate
-        Returns:
-            List of errors (if there are any)
-        """
-        errors = []
-        # Validate ingredients parameter
-        ingredients = request.data.get("ingredients")
-        if not ingredients:
-            errors.append("ingredients parameter cannot be blank")
-        if not isinstance(ingredients, (list, str, tuple)):
-            errors.append("ingredients must be a string, a tuple or a list")
-        # Validate servings parameter
-        servings = request.data.get("servings")
-        if servings is not None:
-            if not isinstance(servings, int):
-                errors.append("servings must be an integer")
-            else:
-                if servings < 1:
-                    errors.append("servings must be greater than 0")
-        return errors
 
 
 class CalculateFromURL(APIView):
