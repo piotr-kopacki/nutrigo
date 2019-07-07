@@ -13,14 +13,14 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         import core.names as names
-        counter = 0
+        to_save = []
         for id, name_list in names.names.items():
             changed = False
             try:
                 food = Food.objects.get(id=id)
-            except Exception as e:
+            except:
                 print(id, name_list)
-                raise e
+                raise
             if food.name != name_list[0]:
                 food.name = name_list[0]
                 changed = True
@@ -31,9 +31,9 @@ class Command(BaseCommand):
                 food.common_name = name_list[2]
                 changed=True
             if changed:
-                counter += 1
-                food.save()
-        if not counter:
+                to_save.append(food)
+        if not to_save:
             self.stdout.write('No update was applied. Names are up to date.')
         else:
-            self.stdout.write(self.style.SUCCESS('Successfully updated %s food names.' % counter))
+            Food.objects.bulk_update(to_save, ['name', 'description', 'common_name'])
+            self.stdout.write(self.style.SUCCESS('Successfully updated %s food names.' % len(to_save)))
