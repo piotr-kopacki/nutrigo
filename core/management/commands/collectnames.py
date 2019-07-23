@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from core.models import Food
@@ -15,6 +13,8 @@ class Command(BaseCommand):
         import core.names as names
         to_save = []
         for id, name_list in names.names.items():
+            if not name_list:
+                continue
             changed = False
             try:
                 food = Food.objects.get(id=id)
