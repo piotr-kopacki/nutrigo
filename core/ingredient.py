@@ -40,8 +40,8 @@ class IngredientError(Exception):
     """Exception raised when creating Ingredient object fails."""
 
     def __init__(self, to_parse, message):
+        super().__init__(message)
         self.to_parse = to_parse
-        self.message = message
 
 
 class IngredientList:
@@ -49,6 +49,11 @@ class IngredientList:
 
     Class which does everything needed for getting nutrition data.
     Use this class to generate data for your recipe.
+
+    Attributes:
+        :raw - list of ingredients provided to be parsed and matched
+        :all - all ingredients which were parsed and matched
+        :bad - all ingredients which couldnt be parsed or matched
     """
 
     def __init__(
@@ -64,6 +69,9 @@ class IngredientList:
         self.all = []
         self.bad = []
 
+        # Index of __next__
+        self._n = 0
+
         ingredient_list = utils.split_and_ingredients(ingredient_list)
         for ing in ingredient_list:
             try:
@@ -72,6 +80,22 @@ class IngredientList:
                 self.bad.append(ing)
             except search.ParseIngredientError:
                 self.bad.append(ing)
+
+    def __iter__(self):
+        self._n = 0
+        return self
+
+    def __next__(self):
+        if self._n > len(self.all) - 1:
+            raise StopIteration
+        self._n += 1
+        return self.all[self._n - 1]
+
+    def __getitem__(self, index):
+        return self.all[index]
+    
+    def __len__(self):
+        return len(self.all)
 
     def total_nutrition(self, servings: int = 1) -> dict:
         """Returns total nutrition.

@@ -114,3 +114,14 @@ class TestIngredientList:
         ings = ingredient.IngredientList(["$$"])
         assert ings.bad[0] == "$$"
         assert len(ings.bad) == 1
+    
+    def test_if_ingredient_list_is_a_list(self):
+        """Ensure that IngredientList is a list by checking methods like __iter__ or __next__"""
+        models.Food.objects.create(name="Chicken")
+        ings = ingredient.IngredientList(["100 g chicken"])
+        assert next(ings)
+        assert iter(ings)
+        assert len(ings) == 1
+        assert ings[0]
+        for ing in ings:
+            assert ing
