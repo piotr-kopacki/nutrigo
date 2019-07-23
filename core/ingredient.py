@@ -2,39 +2,6 @@ from typing import Callable
 
 from core import models, search, utils
 
-to_tagname = {
-    "ENERGY": "ENERC_KCAL",
-    "FAT": "FAT",
-    "PROTEIN": "PROCNT",
-    "CARB": "CHOCDF",
-    "FAT_SAT": "FASAT",
-    "FAT_POLY": "FAPU",
-    "FAT_MONO": "FAMS",
-    "SUGAR": "SUGAR",
-    "CHOLE": "CHOLE",
-    "SODIUM": "NA",
-    "POTAS": "K",
-    "FIBER": "FIBTG",
-}
-
-units = {
-    "ENERGY": "kcal",
-    "FAT": "g",
-    "PROTEIN": "g",
-    "CARB": "g",
-    "FAT_KCAL": "kcal",
-    "PROTEIN_KCAL": "kcal",
-    "CARB_KCAL": "kcal",
-    "FAT_SAT": "g",
-    "FAT_POLY": "g",
-    "FAT_MONO": "g",
-    "SUGAR": "g",
-    "CHOLE": "mg",
-    "SODIUM": "mg",
-    "POTAS": "mg",
-    "FIBER": "g",
-}
-
 
 class IngredientError(Exception):
     """Exception raised when creating Ingredient object fails."""
@@ -93,7 +60,7 @@ class IngredientList:
 
     def __getitem__(self, index):
         return self.all[index]
-    
+
     def __len__(self):
         return len(self.all)
 
@@ -127,13 +94,17 @@ class IngredientList:
             "FIBER": 0,
         }
         for ing in self.all:
-            for n in total_nutrition:
-                calculated = ing.calc_nutrient(to_tagname[n])
-                if calculated:
-                    total_nutrition[n] += calculated
+            for nutrient in total_nutrition:
+                value = ing.calc_nutrient(utils.nutrient_to_tagname[nutrient])
+                if value:
+                    total_nutrition[nutrient] += value
         # Round results and create a tuple with value and unit
         for k, v in total_nutrition.items():
-            total_nutrition[k] = (round(v, 2), round(v / servings, 2), units[k])
+            total_nutrition[k] = (
+                round(v, 2),
+                round(v / servings, 2),
+                utils.nutrient_units[k],
+            )
 
         return total_nutrition
 

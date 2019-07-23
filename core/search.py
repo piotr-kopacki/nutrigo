@@ -11,8 +11,8 @@ class ParseIngredientError(Exception):
     """Exception raised when parsing ingredient fails."""
 
     def __init__(self, to_parse, message):
+        super().__init__(message)
         self.to_parse = to_parse
-        self.message = message
 
 
 def match_food(string: str, n: int = 5) -> list:

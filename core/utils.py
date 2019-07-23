@@ -126,6 +126,39 @@ units = {
     'inch': ('inch',),
 }
 
+nutrient_units = {
+    "ENERGY": "kcal",
+    "FAT": "g",
+    "PROTEIN": "g",
+    "CARB": "g",
+    "FAT_KCAL": "kcal",
+    "PROTEIN_KCAL": "kcal",
+    "CARB_KCAL": "kcal",
+    "FAT_SAT": "g",
+    "FAT_POLY": "g",
+    "FAT_MONO": "g",
+    "SUGAR": "g",
+    "CHOLE": "mg",
+    "SODIUM": "mg",
+    "POTAS": "mg",
+    "FIBER": "g",
+}
+
+nutrient_to_tagname = {
+    "ENERGY": "ENERC_KCAL",
+    "FAT": "FAT",
+    "PROTEIN": "PROCNT",
+    "CARB": "CHOCDF",
+    "FAT_SAT": "FASAT",
+    "FAT_POLY": "FAPU",
+    "FAT_MONO": "FAMS",
+    "SUGAR": "SUGAR",
+    "CHOLE": "CHOLE",
+    "SODIUM": "NA",
+    "POTAS": "K",
+    "FIBER": "FIBTG",
+}
+
 # Approximate conversion from some units to grams
 unit_to_grams = {
     'tsp': 5,
