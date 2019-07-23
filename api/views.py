@@ -23,7 +23,7 @@ class CalculateFromText(APIView):
     Calculates nutrition for a user's recipe.
 
     Parameters:
-        :ingredients - List of ingredients or string separated by a newline
+        :ingredients - List of ingredients
         :servings - (Optional) Number of servings, default 1
     Returns:
         :ingredients - List of ingredients provided by user
