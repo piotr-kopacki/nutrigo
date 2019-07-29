@@ -17,6 +17,9 @@ class IndexView(TemplateView):
     template_name = "api/calc_from_text.html"
 
 
+class AboutView(TemplateView):
+    template_name = "api/about.html"
+
 class CalculateFromText(APIView):
     """
     POST Only.

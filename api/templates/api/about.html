@@ -1,0 +1,34 @@
+{% extends 'api/base.html' %}
+
+{% block body %}
+<div class="siimple-content siimple-content--medium">
+    <div class="siimple--px-5 siimple--py-5">
+        <div class="siimple-h1 siimple--mb-3" align="center">
+            <a class="siimple--color-white siimple--text-normal" href="{% url 'index-view' %}" style="text-decoration: none;">Nutrigo</a>
+        </div>
+        <div class="siimple-paragraph siimple-paragraph--lead siimple--color-white siimple-grid-col--sm-hide"
+            align="center">
+            Calculate nutrition for your favourite recipe!
+        </div>
+        <div class="about-content siimple-alert siimple-alert--primary">
+            <p class="siimple-p">Nutrigo is developed by Piotr Kopacki (<a href="https://github.com/MakuZo">MakuZo</a>).
+            </p>
+            <p class="siimple-p">Nutrigo tries to guess and match ingredients from your recipe to products from USDA's
+                food database.</p>
+            <p class="siimple-p">Note that results may vary depending on the format of your recipe, ingredients that you
+                use and weights/amounts that you provide.
+                With that said, our calculations are not meant to be considered as real.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="siimple-footer siimple--mt-1" align="center">
+    <a class="siimple--color-white siimple--text-normal siimple--mr-2 footer-element" href="{% url 'index-view' %}"
+        target="blank">Home</a>
+    <a class="siimple--color-white siimple--text-normal siimple--mr-2 footer-element"
+        href="https://github.com/MakuZo/nutrigo" target="blank">Github</a>
+    <a class="siimple--color-white siimple--text-normal siimple--mr-2 footer-element"
+        href="{% url 'calculate-from-text' %}">API</a>
+</div>
+{% endblock %}
