@@ -38,7 +38,7 @@ names = {
     1023: ['Gruyere cheese'], # Cheese, gruyere
     1024: ['Limburger cheese'], # Cheese, limburger
     1025: ['Monterey cheese'], # Cheese, monterey
-    1026: ['Mozarella cheese'], # Cheese, mozzarella, whole milk
+    1026: ['Mozzarella cheese'], # Cheese, mozzarella, whole milk
     1027: [], # Cheese, mozzarella, whole milk, low moisture
     1028: [], # Cheese, mozzarella, part skim milk
     1029: [], # Cheese, mozzarella, low moisture, part-skim
@@ -305,7 +305,7 @@ names = {
     2027: ['Oregano', 'dried'], # Spices, oregano, dried
     2028: ['Paprika', 'dried'], # Spices, paprika
     2029: ['Parsley', 'dried'], # Spices, parsley, dried
-    2030: ['Black pepper'], # Spices, pepper, black
+    2030: ['Black pepper', '', "Pepper"], # Spices, pepper, black
     2031: ['Cayenne pepper'], # Spices, pepper, red or cayenne
     2032: ['White pepper'], # Spices, pepper, white
     2033: ['Poppy seed'], # Spices, poppy seed
@@ -332,7 +332,7 @@ names = {
     2055: ['Horseradish'], # Horseradish, prepared
     2063: ['Rosemary', 'fresh'], # Rosemary, fresh
     2064: ['Peppermint', 'fresh'], # Peppermint, fresh
-    2065: ['Spearmint', 'fresh'], # Spearmint, fresh
+    2065: ['Spearmint', 'fresh', 'Mint'], # Spearmint, fresh
     2066: ['Spearmint', 'dried'], # Spearmint, dried
     2068: ['Red wine vinegar'], # Vinegar, red wine
     2069: ['Balsamic vinegar'], # Vinegar, balsamic
@@ -1278,9 +1278,9 @@ names = {
     6167: [], # Sauce, homemade, white, thick
     6168: [], # Sauce, ready-to-serve, pepper or hot
     6169: ['Tabasco sauce'], # Sauce, ready-to-serve, pepper, TABASCO
-    6170: [], # Soup, stock, beef, home-prepared
-    6172: [], # Soup, stock, chicken, home-prepared
-    6174: [], # Soup, stock, fish, home-prepared
+    6170: ["Beef stock"], # Soup, stock, beef, home-prepared
+    6172: ["Chicken stock"], # Soup, stock, chicken, home-prepared
+    6174: ["Fish stock"], # Soup, stock, fish, home-prepared
     6175: ['Hoisin sauce'], # Sauce, hoisin, ready-to-serve
     6176: ['Oyster sauce'], # Sauce, oyster, ready-to-serve
     6177: [], # Soup, minestrone, canned, reduced sodium, ready-to-serve
@@ -1888,7 +1888,7 @@ names = {
     9145: ['Java-plum', '', 'Jambolan'], # Java-plum, (jambolan), raw
     9146: ['Jujube'], # Jujube, raw
     9147: [], # Jujube, Chinese, fresh, dried
-    9148: ['Kiwifruit', 'green'], # Kiwifruit, green, raw
+    9148: ['Kiwifruit', 'green', 'Kiwi'], # Kiwifruit, green, raw
     9149: ['Kumquat'], # Kumquats, raw
     9150: ['Lemon'], # Lemons, raw, without peel
     9152: ['Lemon juice'], # Lemon juice, raw
@@ -2667,7 +2667,7 @@ names = {
     11288: [], # Onions, frozen, chopped, cooked, boiled, drained, without salt
     11289: [], # Onions, frozen, whole, unprepared
     11290: [], # Onions, frozen, whole, cooked, boiled, drained, without salt
-    11291: [], # Onions, spring or scallions (includes tops and bulb), raw
+    11291: ["Scallion onion"], # Onions, spring or scallions (includes tops and bulb), raw
     11292: [], # Onions, young green, tops only
     11293: ['Welsh onion'], # Onions, welsh, raw
     11294: ['Sweet onion'], # Onions, sweet, raw
@@ -3169,7 +3169,7 @@ names = {
     11932: [], # Beans, snap, yellow, canned, regular pack, drained solids
     11933: [], # Beans, snap, yellow, canned, no salt added, drained solids
     11934: [], # Potatoes, mashed, home-prepared, whole milk and butter added
-    11935: [], # Catsup
+    11935: ["Catsup", "", "Ketchup"], # Catsup
     11936: [], # Mushrooms, brown, italian, or crimini, exposed to ultraviolet light, raw
     11937: [], # Pickles, cucumber, dill or kosher dill
     11938: [], # Mushroom, white, exposed to ultraviolet light, raw
@@ -3258,7 +3258,7 @@ names = {
     12058: ['Acorn nut'], # Nuts, acorns, raw
     12059: [], # Nuts, acorns, dried
     12060: [], # Nuts, acorn flour, full fat
-    12061: [], # Nuts, almonds
+    12061: ["Almond"], # Nuts, almonds
     12062: [], # Nuts, almonds, blanched
     12063: [], # Nuts, almonds, dry roasted, without salt added
     12065: [], # Nuts, almonds, oil roasted, without salt added
@@ -3289,7 +3289,7 @@ names = {
     12117: ['Coconut milk'], # Nuts, coconut milk, raw (liquid expressed from grated meat and water)
     12118: [], # Nuts, coconut milk, canned (liquid expressed from grated meat and water)
     12119: [], # Nuts, coconut water (liquid from coconuts)
-    12120: [], # Nuts, hazelnuts or filberts
+    12120: ["Hazelnut", "", "Filbert"], # Nuts, hazelnuts or filberts
     12121: [], # Nuts, hazelnuts or filberts, blanched
     12122: [], # Nuts, hazelnuts or filberts, dry roasted, without salt added
     12127: ['Ginkgo nut'], # Nuts, ginkgo nuts, raw
@@ -4490,7 +4490,7 @@ names = {
     16135: [], # Winged beans, mature seeds, raw
     16136: [], # Winged beans, mature seeds, cooked, boiled, without salt
     16137: [], # Hummus, home prepared
-    16138: [], # Falafel, home-prepared
+    16138: ["Falafel"], # Falafel, home-prepared
     16139: [], # Soymilk, original and vanilla, with added calcium, vitamins A and D
     16144: ['Lentil', 'pink red'], # Lentils, pink or red, raw
     16145: [], # Beans, kidney, red, mature seeds, canned, drained solids
@@ -4501,7 +4501,7 @@ names = {
     16155: [], # Peanut butter, smooth, vitamin and mineral fortified
     16156: [], # Peanut butter, chunky, vitamin and mineral fortified
     16157: [], # Chickpea flour (besan)
-    16158: [], # Hummus, commercial
+    16158: ["Hummus"], # Hummus, commercial
     16159: [], # Tofu, extra firm, prepared with nigari
     16160: [], # Tofu, hard, prepared with nigari
     16161: [], # MORI-NU, Tofu, silken, soft
@@ -5110,25 +5110,25 @@ names = {
     18015: [], # Biscuits, plain or buttermilk, refrigerated dough, higher fat, baked
     18016: [], # Biscuits, plain or buttermilk, prepared from recipe
     18017: [], # Biscuits, mixed grain, refrigerated dough
-    18019: [], # Bread, banana, prepared from recipe, made with margarine
+    18019: ["Banana bread"], # Bread, banana, prepared from recipe, made with margarine
     18021: [], # Bread, boston brown, canned
     18022: [], # Bread, cornbread, dry mix, enriched (includes corn muffin mix)
     18023: [], # Bread, cornbread, dry mix, prepared with 2% milk, 80% margarine, and eggs
     18024: [], # Bread, cornbread, prepared from recipe, made with low fat (2%) milk
     18025: [], # Bread, cracked-wheat
-    18027: [], # Bread, egg
+    18027: ["Egg bread"], # Bread, egg
     18028: [], # Bread, egg, toasted
-    18029: [], # Bread, french or vienna (includes sourdough)
+    18029: ["French bread"], # Bread, french or vienna (includes sourdough)
     18030: [], # Bread, french or vienna, toasted (includes sourdough)
     18032: [], # Bread, irish soda, prepared from recipe
-    18033: [], # Bread, Italian
+    18033: ["Italian bread"], # Bread, Italian
     18036: [], # Bread, multi-grain, toasted (includes whole-grain)
-    18037: [], # Bread, oat bran
+    18037: ["Oat bran bread"], # Bread, oat bran
     18038: [], # Bread, oat bran, toasted
-    18039: [], # Bread, oatmeal
+    18039: ["Oatmeal bread"], # Bread, oatmeal
     18040: [], # Bread, oatmeal, toasted
     18041: [], # Bread, pita, white, enriched
-    18042: [], # Bread, pita, whole-wheat
+    18042: ["Whole-wheat bread"], # Bread, pita, whole-wheat
     18043: [], # Bread, protein (includes gluten)
     18044: [], # Bread, pumpernickel
     18047: [], # Bread, raisin, enriched
@@ -5140,9 +5140,9 @@ names = {
     18055: [], # Bread, reduced-calorie, wheat
     18057: [], # Bread, reduced-calorie, white
     18059: [], # Bread, rice bran
-    18060: [], # Bread, rye
+    18060: ["Rye bread"], # Bread, rye
     18061: [], # Bread, rye, toasted
-    18064: [], # Bread, wheat
+    18064: ["Wheat bread", "", "Bread"], # Bread, wheat
     18065: [], # Bread, wheat, toasted
     18069: [], # Bread, white, commercially prepared (includes soft bread crumbs)
     18070: [], # Bread, white, commercially prepared, toasted
@@ -5152,9 +5152,9 @@ names = {
     18076: [], # Bread, whole-wheat, commercially prepared, toasted
     18077: [], # Bread, whole-wheat, prepared from recipe
     18078: [], # Bread, whole-wheat, prepared from recipe, toasted
-    18079: [], # Bread, crumbs, dry, grated, plain
-    18080: [], # Bread, sticks, plain
-    18081: [], # Bread, stuffing, dry mix
+    18079: ["Bread crumb"], # Bread, crumbs, dry, grated, plain
+    18080: ["Bread stick"], # Bread, sticks, plain
+    18081: ["Bread stuffing"], # Bread, stuffing, dry mix
     18082: [], # Bread, stuffing, dry mix, prepared
     18084: [], # Bread, stuffing, cornbread, dry mix
     18085: [], # Bread, stuffing, cornbread, dry mix, prepared
@@ -5400,8 +5400,8 @@ names = {
     18407: [], # Bagels, plain, unenriched, with calcium propionate (includes onion, poppy, sesame)
     18408: [], # Bagels, plain, unenriched, without calcium propionate(includes onion, poppy, sesame)
     18412: [], # Bread, cornbread, dry mix, unenriched (includes corn muffin mix)
-    18413: [], # Bread, pita, white, unenriched
-    18414: [], # Bread, raisin, unenriched
+    18413: ["Pita bread"], # Bread, pita, white, unenriched
+    18414: ["Raisin bread"], # Bread, raisin, unenriched
     18416: [], # Bread, white, commercially prepared, low sodium, no salt
     18417: [], # Cake, coffeecake, cinnamon with crumb topping, commercially prepared, unenriched
     18418: [], # Cake, pound, commercially prepared, other than all butter, unenriched
@@ -5756,7 +5756,7 @@ names = {
     19293: [], # Frozen yogurts, vanilla, soft-serve
     19294: [], # Fruit butters, apple
     19295: [], # Candies, MARS SNACKFOOD US, SNICKERS MUNCH bar
-    19296: [], # Honey
+    19296: ["Honey", "", "Honey"], # Honey
     19297: [], # Jams and preserves
     19300: [], # Jellies
     19301: [], # Candies, fudge, chocolate marshmallow, with nuts, prepared-by-recipe
@@ -5787,18 +5787,18 @@ names = {
     19331: [], # Puddings, lemon, dry mix, instant, prepared with whole milk
     19332: [], # Puddings, lemon, dry mix, regular
     19333: [], # Pudding, lemon, dry mix, regular, prepared with sugar, egg yolk and water
-    19334: [], # Sugars, brown
-    19335: [], # Sugars, granulated
-    19336: [], # Sugars, powdered
-    19337: [], # Sweeteners, tabletop, aspartame, EQUAL, packets
-    19340: [], # Sugars, maple
+    19334: ["Brown sugar"], # Sugars, brown
+    19335: ["Sugar"], # Sugars, granulated
+    19336: ["Powdered sugar"], # Sugars, powdered
+    19337: ["Aspartame sweetener"], # Sweeteners, tabletop, aspartame, EQUAL, packets
+    19340: ["Maple sugar"], # Sugars, maple
     19345: [], # Syrups, chocolate, HERSHEY'S Genuine Chocolate Flavored Lite Syrup
     19348: [], # Syrups, chocolate, fudge-type
-    19349: [], # Syrups, corn, dark
-    19350: [], # Syrups, corn, light
+    19349: ["Corn syrup", "dark"], # Syrups, corn, dark
+    19350: ["Corn syrup", "light"], # Syrups, corn, light
     19351: [], # Syrups, corn, high-fructose
-    19352: [], # Syrups, malt
-    19353: [], # Syrups, maple
+    19352: ["Malt syrup"], # Syrups, malt
+    19353: ["Maple syrup"], # Syrups, maple
     19355: [], # Syrups, sorghum
     19359: [], # Candies, MARS SNACKFOOD US, SNICKERS CRUNCHER
     19360: [], # Syrups, table blends, pancake, with 2% maple
@@ -5950,8 +5950,8 @@ names = {
     20009: [], # Buckwheat groats, roasted, dry
     20010: [], # Buckwheat groats, roasted, cooked
     20011: [], # Buckwheat flour, whole-groat
-    20012: [], # Bulgur, dry
-    20013: [], # Bulgur, cooked
+    20012: ["Bulgur", "dry"], # Bulgur, dry
+    20013: ["Bulgur", "cooked"], # Bulgur, cooked
     20014: [], # Corn grain, yellow
     20015: [], # Corn bran, crude
     20016: [], # Corn flour, whole-grain, yellow
@@ -7661,10 +7661,10 @@ names = {
     43006: [], # Babyfood, fruit, tutti frutti, strained
     43007: [], # Babyfood, fruit, tutti frutti, junior
     43008: [], # Babyfood, dinner, chicken and rice
-    43015: [], # Salad dressing, caesar dressing, regular
-    43016: [], # Salad dressing, coleslaw
-    43017: [], # Salad dressing, green goddess, regular
-    43019: [], # Salad dressing, sweet and sour
+    43015: ['Caesar dressing'], # Salad dressing, caesar dressing, regular
+    43016: ['Coleslaw dressing'], # Salad dressing, coleslaw
+    43017: ['Green goddess dressing'], # Salad dressing, green goddess, regular
+    43019: ['Sweet and sour dressing'], # Salad dressing, sweet and sour
     43020: [], # Salad dressing, blue or roquefort cheese, low calorie
     43021: [], # Salad dressing, caesar, low calorie
     43026: [], # Syrups, sugar free
