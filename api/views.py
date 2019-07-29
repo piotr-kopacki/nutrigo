@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core import utils
-from core.ingredient import Ingredient, IngredientError, IngredientList
+from core.ingredient import IngredientList
 from core.recipe import recipe_sites
 
 from api.serializers import IngredientsSerializer
