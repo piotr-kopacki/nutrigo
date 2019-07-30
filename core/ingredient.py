@@ -1,95 +1,92 @@
+from typing import Callable
+
 from core import models, search, utils
-
-to_tagname = {
-    "ENERGY": "ENERC_KCAL",
-    "FAT": "FAT",
-    "PROTEIN": "PROCNT",
-    "CARB": "CHOCDF",
-    # The rest
-    "FAT_SAT": "FASAT",
-    "FAT_POLY": "FAPU",
-    "FAT_MONO": "FAMS",
-    "SUGAR": "SUGAR",
-    "CHOLE": "CHOLE",
-    "SODIUM": "NA",
-    "POTAS": "K",
-    "FIBER": "FIBTG",
-}
-
-units = {
-    "ENERGY": "kcal",
-    "FAT": "g",
-    "PROTEIN": "g",
-    "CARB": "g",
-    "FAT_KCAL": "kcal",
-    "PROTEIN_KCAL": "kcal",
-    "CARB_KCAL": "kcal",
-    "FAT_SAT": "g",
-    "FAT_POLY": "g",
-    "FAT_MONO": "g",
-    "SUGAR": "g",
-    "CHOLE": "mg",
-    "SODIUM": "mg",
-    "POTAS": "mg",
-    "FIBER": "g",
-}
 
 
 class IngredientError(Exception):
-    """Exception raised when parsing ingredient fails."""
+    """Exception raised when creating Ingredient object fails."""
 
     def __init__(self, to_parse, message):
+        super().__init__(message)
         self.to_parse = to_parse
-        self.message = message
 
 
-class IngredientList():
+class IngredientList:
     """Parses and stores data about ingredients.
-    
+
     Class which does everything needed for getting nutrition data.
     Use this class to generate data for your recipe.
+
+    Attributes:
+        :raw - list of ingredients provided to be parsed and matched
+        :all - all ingredients which were parsed and matched
+        :bad - all ingredients which couldnt be parsed or matched
     """
 
-    def __init__(self, ingredient_list: list):
+    def __init__(
+        self,
+        ingredient_list: list,
+        parser: Callable[[str], dict] = search.parse_ingredient,
+    ):
         """
         :ingredient_list - list of ingredients
+        :parser - parser which handles user input (ingredient name)
         """
         self.raw = ingredient_list
         self.all = []
+        self.bad = []
+
+        # Index of __next__
+        self._n = 0
 
         ingredient_list = utils.split_and_ingredients(ingredient_list)
         for ing in ingredient_list:
             try:
-                self.all.append(Ingredient(ing))
+                self.all.append(Ingredient(ing, parser=parser))
             except IngredientError:
-                # Maybe add fail count? Could be used for statistics or anything else...
-                continue
+                self.bad.append(ing)
+            except search.ParseIngredientError:
+                self.bad.append(ing)
+
+    def __iter__(self):
+        self._n = 0
+        return self
+
+    def __next__(self):
+        if self._n > len(self.all) - 1:
+            raise StopIteration
+        self._n += 1
+        return self.all[self._n - 1]
+
+    def __getitem__(self, index):
+        return self.all[index]
+
+    def __len__(self):
+        return len(self.all)
 
     def total_nutrition(self, servings: int = 1) -> dict:
         """Returns total nutrition.
-        
+
         Values are rounded with 2 digit precision.
 
         Args:
             servings: count of servings
         Returns:
-            Dictionary with nutrition name as a key and tuple of amount and unit as value, e.g.
+            Dictionary with nutrient name as a key and tuple of value, value (per serving) and unit, e.g.
             {
-                'PROTEIN': (127.21, 'g'),
-                'FAT': (124.13, 'g'),
+                'PROTEIN': (127.21, 31.80, 'g'),
+                'FAT': (124.13, 31.03, 'g'),
                 ...
             }
         """
         total_nutrition = {
-            # Big 4
             "ENERGY": 0,
             "FAT": 0,
             "PROTEIN": 0,
             "CARB": 0,
-            # The rest
-            # "FAT_SAT": 0,
-            # "FAT_POLY": 0,
-            # "FAT_MONO": 0,
+            "FAT_SAT": 0,
+            "FAT_POLY": 0,
+            "FAT_MONO": 0,
             "SUGAR": 0,
             "CHOLE": 0,
             "SODIUM": 0,
@@ -97,23 +94,27 @@ class IngredientList():
             "FIBER": 0,
         }
         for ing in self.all:
-            for n in total_nutrition:
-                calculated = ing.calc_nutrient(to_tagname[n])
-                if calculated:
-                    total_nutrition[n] += calculated
+            for nutrient in total_nutrition:
+                value = ing.calc_nutrient(utils.nutrient_to_tagname[nutrient])
+                if value:
+                    total_nutrition[nutrient] += value
         # Round results and create a tuple with value and unit
         for k, v in total_nutrition.items():
-            total_nutrition[k] = (round(v, 2), units[k])
+            total_nutrition[k] = (
+                round(v, 2),
+                round(v / servings, 2),
+                utils.nutrient_units[k],
+            )
 
-        if servings > 1:
-            return {k: (round(t[0] / servings, 2), t[1]) for k, t in total_nutrition.items()}
         return total_nutrition
 
-class Ingredient():
+
+class Ingredient:
     """Parses and stores data about an ingredient.
-    
+
     Class which parses ingredient and stores data about it's weight, amount, nutrition, etc..
-    Raises IngredientError if parser couldn't match a Food in database or Food doesn't have any FoodWeight to be selected.
+    Raises IngredientError if parser couldn't match a Food in database or Food doesn't have any 
+    FoodWeight to be selected.
 
     Example usage:
     >>> ing = Ingredient("100 g of chicken breast")
@@ -125,19 +126,23 @@ class Ingredient():
     (172.0, 20.85, 9.25)
 
     Attributes:
+    :name   - name of ingredient
+    :weight - weight in grams
+    :matched_food - Food object from database
     :amount - amount of weight
     :unit   - unit (if parsed)
+    :raw_input - original string which was used to find matched_food (user input)
     :measurement - measurement (if parsed or no unit) e.g. slice, stick, batch, etc..
-    :name   - name of ingredient
-    :matched_food - Food object from database
-    :weight - weight in grams
     """
 
-    def __init__(self, to_parse: str):
+    def __init__(
+        self, to_parse: str, parser: Callable[[str], dict] = search.parse_ingredient
+    ):
         """
         :to_parse - ingredient name
+        :parser - parser which handles user input (ingredient name)
         """
-        self.amount, self.unit, self.measurement, self.name = search.parse_ingredient(
+        self.amount, self.unit, self.measurement, self.name, self.raw_input = parser(
             to_parse
         ).values()
         self.matched_food = search.match_one_food(self.name)
@@ -148,7 +153,7 @@ class Ingredient():
         else:
             self.weight = self.get_weight()
 
-    def get_weight(self):
+    def get_weight(self) -> float:
         """
         Returns weight (in grams).
         """
@@ -157,21 +162,21 @@ class Ingredient():
                 self.matched_food, f"This food doesn't have any FoodWeight objects."
             )
         matched_weight = search.match_one_weight(self.matched_food, self.measurement)
-        return float(matched_weight.weight) * (
+        return float(matched_weight.value) * (
             self.amount / float(matched_weight.amount)
         )
 
     def __repr__(self):  # pragma: no cover
-        return f"{self.weight:.2f} g of {self.matched_food.desc_long}"
+        return f"{self.weight:.2f} g of {self.matched_food}"
 
     def calc_nutrient(self, tagname: str) -> float:
         """
         Calculates nutrient amount for ingredient's weight
 
-        Args: 
+        Args:
             tagname: International Network of Food Data Systems tagname
-        Returns: 
-            Amount of nutrient (in it's corresponding unit) for self.weight 
+        Returns:
+            Amount of nutrient (in it's corresponding unit) for self.weight
         """
         nutrient = self.get_nutrient_by_tagname(tagname)
         if not nutrient:
@@ -188,49 +193,49 @@ class Ingredient():
             return None
 
     @property
-    def energy(self):
+    def energy(self) -> float:
         return self.calc_nutrient("ENERC_KCAL")
 
     @property
-    def protein(self):
+    def protein(self) -> float:
         return self.calc_nutrient("PROCNT")
 
     @property
-    def fat(self):
+    def fat(self) -> float:
         return self.calc_nutrient("FAT")
 
     @property
-    def fat_sat(self):
+    def fat_sat(self) -> float:
         return self.calc_nutrient("FASAT")
 
     @property
-    def fat_poly(self):
+    def fat_poly(self) -> float:
         return self.calc_nutrient("FAPU")
 
     @property
-    def fat_mono(self):
+    def fat_mono(self) -> float:
         return self.calc_nutrient("FAMS")
 
     @property
-    def carb(self):
+    def carb(self) -> float:
         return self.calc_nutrient("CHOCDF")
 
     @property
-    def sugar(self):
+    def sugar(self) -> float:
         return self.calc_nutrient("SUGAR")
 
     @property
-    def chol(self):
+    def chol(self) -> float:
         return self.calc_nutrient("CHOLE")
 
     @property
-    def sodium(self):
+    def sodium(self) -> float:
         return self.calc_nutrient("NA")
 
     @property
-    def potas(self):
+    def potas(self) -> float:
         return self.calc_nutrient("K")
 
     @property
-    def fiber(self):
+    def fiber(self) -> float:
         return self.calc_nutrient("FIBTG")

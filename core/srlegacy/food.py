@@ -5,14 +5,14 @@ import core.models
 COLUMN_NAMES = (   # Corresponding origin column names to model fields
     'NDB_No',      # id
     'FdGrp_Cd',    # -
-    'Long_Desc',   # desc_long
-    'Shrt_Desc',   # desc_short
+    'Long_Desc',   # name
+    'Shrt_Desc',   # -
     'ComName',     # common_name
-    'ManufacName', # manufac_name
+    'ManufacName', # -
     'Survey',      # -
     'Ref_desc',    # -
-    'Refuse',      # refuse_perc
-    'SciName',     # sci_name
+    'Refuse',      # -
+    'SciName',     # -
     'N_Factor',    # n_factor
     'Pro_Factor',  # pro_factor
     'Fat_Factor',  # fat_factor
@@ -38,12 +38,8 @@ CONVERT_TYPES = {
 
 COLUMN_TO_FIELD = {
     'NDB_No':      "id",
-    'Long_Desc':   "desc_long",
-    'Shrt_Desc':   "desc_short",
+    'Long_Desc':   "name",
     'ComName':     "common_name",
-    'ManufacName': "manufac_name",
-    'Refuse':      "refuse_perc",
-    'SciName':     "sci_name",
     'N_Factor':    "n_factor",
     'Pro_Factor':  "pro_factor",
     'Fat_Factor':  "fat_factor",

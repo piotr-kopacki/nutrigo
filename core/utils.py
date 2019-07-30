@@ -7,6 +7,15 @@ import textblob.translate
 from nltk.stem import WordNetLemmatizer
 
 DEFAULT_MEASUREMENT = "serving"
+DEFAULT_MEASUREMENT_VARIATIONS = {
+    'piece', 'fruit', 'bit', 'section', 'slice', 'chunk', 
+    'segment', 'lump', 'hunk', 'wedge', 'slab', 'knob', 
+    'block', 'cake', 'bar', 'tablet', 'brick', 'cube', 'stick', 
+    'length; offcut', 'sample', 'particle', 'fragment', 'flake', 
+    'sliver', 'splinter', 'wafer', 'chip', 'crumb', 'grain', 
+    'speck', 'scrap', 'remnant', 'shred', 'shard', 'snippet', 
+    'mite', 'mouthful', 'morsel'
+}
 
 # stop words taken from https://www.ranks.nl/stopwords
 # units and measures e.g. can, g, l, ml, etc.. are not included (removed from list)
@@ -117,6 +126,39 @@ units = {
     'inch': ('inch',),
 }
 
+nutrient_units = {
+    "ENERGY": "kcal",
+    "FAT": "g",
+    "PROTEIN": "g",
+    "CARB": "g",
+    "FAT_KCAL": "kcal",
+    "PROTEIN_KCAL": "kcal",
+    "CARB_KCAL": "kcal",
+    "FAT_SAT": "g",
+    "FAT_POLY": "g",
+    "FAT_MONO": "g",
+    "SUGAR": "g",
+    "CHOLE": "mg",
+    "SODIUM": "mg",
+    "POTAS": "mg",
+    "FIBER": "g",
+}
+
+nutrient_to_tagname = {
+    "ENERGY": "ENERC_KCAL",
+    "FAT": "FAT",
+    "PROTEIN": "PROCNT",
+    "CARB": "CHOCDF",
+    "FAT_SAT": "FASAT",
+    "FAT_POLY": "FAPU",
+    "FAT_MONO": "FAMS",
+    "SUGAR": "SUGAR",
+    "CHOLE": "CHOLE",
+    "SODIUM": "NA",
+    "POTAS": "K",
+    "FIBER": "FIBTG",
+}
+
 # Approximate conversion from some units to grams
 unit_to_grams = {
     'tsp': 5,
@@ -142,7 +184,7 @@ measurements = {
     'dice', 'dollop', 'jar', 'lump', 'morsel', 'mouthful', 'nibble',
     'pat', 'pinch', 'plate', 'plateful', 'portion', 'punnet', 'ration', 'rind',
     'round', 'scrap', 'serving', 'slab', 'slice', 'tidbit',
-    'titbit', 'topping', 'mm', 'cm', 'm', 'inch'
+    'titbit', 'topping', 'mm', 'cm', 'm', 'inch', "small", "big", "large"
 }
 
 all_units = {unit for tup in units.values() for unit in tup}
@@ -171,9 +213,9 @@ def trim_whitespaces(string: str) -> str:
     return re.sub(r"\s+", " ", string).strip()
 
 
-def strip_special_chars(string: str) -> str:
+def strip_special_chars(string: str, whitelist: list=['%', '/', '\-', "'"]) -> str:
     # TODO: convert words with hyphen into separate words
-    """Removes all special characters except forward slash from a word. Also removes " 's " from word.
+    """Removes all special characters except chars from whitelist from a word. Also removes " 's " from word.
     
     Example:
     >>> strip_special_chars("1/2 chicken's leg (boneless and skinless)")
@@ -184,8 +226,11 @@ def strip_special_chars(string: str) -> str:
     Returns:
         Stripped string.
     """
+    # In case whitelist was a None
+    if not whitelist:
+        whitelist = []
     return trim_whitespaces(
-        re.sub(r"([^a-zA-Z\s0-9/'-]+?)", "", string).replace("'s", "")
+        re.sub("([^a-zA-Z\s0-9{}]+?)".format("".join(whitelist)), "", string).replace("'s", "")
     )
 
 
@@ -217,7 +262,7 @@ def translate(string: str, from_lang: str = None) -> str:
     return translator.translate(string, to_lang="en")
 
 
-def translate_list_of_ingredients(ingredients: list, from_lang: str = None) -> str:
+def translate_many(ingredients: list, from_lang: str = None) -> list:
     """Translates list of ingredients into English.
 
     Args:
@@ -233,7 +278,7 @@ def translate_list_of_ingredients(ingredients: list, from_lang: str = None) -> s
 def singularize(string: str) -> str:
     """Singularizes words in string.
 
-    Uses singularize method from textblob module. Skips words from singularize_exceptions set.
+    Uses singularize method from textblob module.
     
     Args:
         string: A string to be singularized
@@ -349,7 +394,9 @@ def separate_letters_from_numbers(string: str) -> str:
     """Sperates letters and numbers in a string.
 
     Sperates letters and numbers in a string so cases like '1kg of chicken breast' are still valid for parser.
-    Leaves numbers separated by a '/' or '.' as they are.
+    Leaves untouched:
+    - numbers separated by a '/' or '.'
+    - percentages e.g 32% (beware that if a percentage number is provided with a space, it will be joined together)
     
     Example:
     >>> split_by_letters_and_numbers("abc1234abc 124-124")
@@ -363,7 +410,9 @@ def separate_letters_from_numbers(string: str) -> str:
         String with separated letters and numbers.
     """
     res = trim_whitespaces(" ".join(re.split(r"(\d+)", string)))
-    return re.sub(r"(\d+)(?:\s)(\/|\.)(?:\s)(\d+)", r"\1\2\3", res)
+    res = re.sub(r"(\d+)(?:\s)(\/|\.)(?:\s)(\d+)", r"\1\2\3", res)
+    res = re.sub(r"(\d+)(?:\s)(%)", r"\1\2", res)
+    return res
 
 
 def split_and_ingredients(ingredient_list: list) -> list:
@@ -423,4 +472,3 @@ def time_func(f):
         return ret
 
     return wrap  # pragma: no cover
-

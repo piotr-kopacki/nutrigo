@@ -4,12 +4,12 @@ import core.models
 
 COLUMN_NAMES = (    # Corresponding origin column names to model fields
     'NDB_No',       # food
-    'Seq',          # seq
+    'Seq',          # -
     'Amount',       # amount
     'Msre_desc',    # desc
-    'Gm_Wgt',       # weight
-    'Num_Data_Pts', # data_points
-    'Deviation'     # deviation
+    'Gm_Wgt',       # value
+    'Num_Data_Pts', # -
+    'Deviation'     # -
 )
 
 CONVERT_TYPES = {
@@ -24,12 +24,9 @@ CONVERT_TYPES = {
 
 COLUMN_TO_FIELD = {
     'NDB_No':       'food',
-    'Seq':          'seq',
     'Amount':       'amount',
     'Msre_desc':    'desc',
-    'Gm_Wgt':       'weight',
-    'Num_Data_Pts': 'data_points',
-    'Deviation':    'deviation'
+    'Gm_Wgt':       'value',
 }
 
 def parse_row(row):

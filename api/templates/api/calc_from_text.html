@@ -1,0 +1,195 @@
+{% extends 'api/base.html' %}
+{% block body %}
+<div class="siimple-content siimple-content--medium">
+    <div class="siimple--px-5 siimple--py-5">
+        <div class="siimple-h1 siimple--mb-3" align="center">
+            <a class="siimple--color-white siimple--text-normal" href="{% url 'index-view' %}" style="text-decoration: none;">Nutrigo</a>
+        </div>
+        <div class="siimple-paragraph siimple-paragraph--lead siimple--color-white siimple-grid-col--sm-hide"
+            align="center">
+            Calculate nutrition for your favourite recipe!
+        </div>
+        <div class="siimple-field">
+            <textarea class="siimple-textarea" id="ingredients-value" rows="13" placeholder="1 chicken breast
+2 eggs
+200 g of all-purpose flour
+..."></textarea>
+        </div>
+
+        <div class="siimple-grid">
+            <div class="siimple-grid-row">
+                <div class="siimple-grid-col siimple-grid-col--2 siimple-grid-col--sm-6">
+                    <div class="siimple--mt-1 siimple--text-center siimple--color-white ">Servings</div>
+                </div>
+                <div class="siimple-grid-col siimple-grid-col--2 siimple-grid-col--sm-6">
+                    <input type="number" class="siimple-input siimple--width-100" id="servings-value" value="1" min="1">
+                </div>
+
+                <div class="siimple-grid-col siimple-grid-col--8 siimple-grid-col--sm-12">
+                    <div class="siimple-btn siimple-btn--primary siimple-btn--fluid" id="calculate-button">
+                        Calculate
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="siimple-footer siimple--mt-1" align="center">
+            <a class="siimple--color-white siimple--text-normal siimple--mr-2 footer-element"
+                href="https://github.com/MakuZo/nutrigo" target="blank">Github</a>
+            <a class="siimple--color-white siimple--text-normal siimple--mr-2 footer-element" href="{% url 'about-view' %}">About</a>
+            <a class="siimple--color-white siimple--text-normal siimple--mr-2 footer-element" href="{% url 'calculate-from-text' %}">API</a>
+        </div>
+    </div>
+</div>
+
+<div class="siimple-modal siimple-modal--medium" id="result-modal" style="display:none;">
+    <div class="siimple-modal-content">
+        <div class="siimple-modal-header">
+            <div class="siimple-modal-header-title">Results</div>
+            <div class="siimple-modal-header-close" id="modal-close"></div>
+        </div>
+        <div class="siimple-modal-body">
+            <div id="nutrition-chart" style="width: 100%; min-height: 300px"></div>
+            <div id="nutrition-table" class="siimple-table siimple-table--border">
+                <div class="siimple-table-header">
+                    <div class="siimple-table-row">
+                        <div class="siimple-table-cell">Nutrient</div>
+                        <div class="siimple-table-cell">Summary</div>
+                        <div class="siimple-table-cell">Serving</div>
+                    </div>
+                </div>
+                <div class="siimple-table-body" id="nutrition-table-body">
+                </div>
+            </div>
+        </div>
+        <div class="siimple-modal-footer">
+            Note that presented values are approximate and shouldn't be considered as real.
+        </div>
+    </div>
+</div>
+
+<script>
+    var namesForNutrients = units = {
+        "ENERGY": "Energy",
+        "FAT": "Fat",
+        "PROTEIN": "Protein",
+        "CARB": "Carbs",
+        "FAT_SAT": "Sat Fat",
+        "FAT_POLY": "Polyunsat Fat",
+        "FAT_MONO": "Monounsat Fat",
+        "SUGAR": "Sugar",
+        "CHOLE": "Chole",
+        "SODIUM": "Sodium",
+        "POTAS": "Potas",
+        "FIBER": "Fiber",
+    }
+    var chart = null;
+    function createChart(data) {
+        chart = echarts.init(document.getElementById("nutrition-chart"))
+        option = {
+            title: {
+                text: `Total energy: ${data.nutrition.ENERGY[0]} kcal`,
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}g ({d}%)"
+            },
+            legend: {
+                bottom: 40,
+                left: 'center',
+                data: ['Fat', 'Protein', 'Carbs']
+            },
+            series: [
+                {
+                    name: 'Nutrition',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '45%'],
+                    data: [
+                        { value: data.nutrition.FAT[0], name: 'Fat', itemStyle: { color: '#FDE74C' } },
+                        { value: data.nutrition.PROTEIN[0], name: 'Protein', itemStyle: { color: '#5BC0EB' } },
+                        { value: data.nutrition.CARB[0], name: 'Carbs', itemStyle: { color: '#9BC53D' } },
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        chart.setOption(option, true);
+    }
+    function dropChart() {
+        chart.clear()
+    }
+    function postData() {
+        var xhr = new XMLHttpRequest();
+        var url = "{% url 'calculate-from-text' %}";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                // Show modal before creating chart
+                document.getElementById("result-modal").style.display = "";
+                createChart(json);
+                fillNutritionTable(json);
+            }
+        };
+        var ings = document.getElementById("ingredients-value").value.split("\n");
+        var servings = parseInt(document.getElementById("servings-value").value);
+        var data = JSON.stringify({ "ingredients": ings, "servings": servings });
+        xhr.send(data);
+    }
+    function fillNutritionTable(data) {
+        data = Object.entries(data.nutrition);
+        var table = document.getElementById("nutrition-table-body");
+        for (var i = 0; i < data.length; i++) {
+            // Prepare data
+            var name = namesForNutrients[data[i][0]];
+            var unit = data[i][1][2];
+            var summary = `${data[i][1][0]} ${unit}`;
+            var serving = `${data[i][1][1]} ${unit}`;
+            // Create a row
+            var row = document.createElement("div");
+            row.className = "siimple-table-row"
+            // Fill in row
+            var name_div = document.createElement("div");
+            name_div.className = "siimple-table-cell";
+            name_div.innerHTML = name;
+            var summary_div = document.createElement("div");
+            summary_div.className = "siimple-table-cell";
+            summary_div.innerHTML = summary;
+            var serving_div = document.createElement("div");
+            serving_div.className = "siimple-table-cell";
+            serving_div.innerHTML = serving;
+            row.appendChild(name_div);
+            row.appendChild(summary_div);
+            row.appendChild(serving_div);
+            // Add row to table
+            table.appendChild(row);
+        }
+    }
+    function clearNutritionTable() {
+        var table = document.getElementById("nutrition-table-body");
+        table.innerHTML = '';
+    }
+    document.getElementById("calculate-button").addEventListener("click", function () {
+        input = document.getElementById("ingredients-value").value.trim();
+        if (!input) {
+            alert("Add some ingredients first");
+        } else {
+            postData();
+        }
+    });
+    document.getElementById("modal-close").addEventListener("click", function () {
+        document.getElementById("result-modal").style.display = "none";
+        dropChart();
+        clearNutritionTable();
+    });
+</script>
+{% endblock %}

@@ -7,14 +7,22 @@ from core import utils
 from core.models import Food, FoodWeight
 
 
+class ParseIngredientError(Exception):
+    """Exception raised when parsing ingredient fails."""
+
+    def __init__(self, to_parse, message):
+        super().__init__(message)
+        self.to_parse = to_parse
+
+
 def match_food(string: str, n: int = 5) -> list:
-    """Finds most matching Food to a string.
+    """Finds most matching Food from database to a string.
 
     Very basic (but so far most effective) function to match a string to a Food object.
     It grants points by:
-        3 points for every word in Food's long description
-        2 points for every word in Food's short description (disabled for now)
-        1 point for every word in Food's common name
+        3 points for every matching word in Food's name
+        1 points for every matching word in Food's description
+        3 points if string is equal to Food's common name
     Then sorts the results by:
         1. Scored points (More is better)
         2. Length of long description (Less is better)
@@ -26,11 +34,11 @@ def match_food(string: str, n: int = 5) -> list:
         List of tuples: (Food, points) with points > 0.
     """
     if not string:
-        raise ValueError("String cannot be empty.")
+        return []
 
-    POINTS_PER_DESC_LONG = 3
-    POINTS_PER_DESC_SHORT = 2
-    POINTS_PER_COMMON_NAME = 1
+    POINTS_PER_NAME = 3
+    POINTS_ON_COMMON_NAME = 3
+    POINTS_PER_DESCRIPTION = 1
 
     string = string.casefold()
     string_split = set(string.split())
@@ -38,39 +46,44 @@ def match_food(string: str, n: int = 5) -> list:
     # Optimize query by adding filters
     filters = Q()
     for w in string_split:
-        filters = filters | Q(desc_long__icontains=w)
+        filters = filters | Q(name__icontains=w) | Q(common_name__icontains=w)
     food_list = Food.objects.filter(filters)
 
     result = []
     for food in food_list:
         points = sum(
             [
-                POINTS_PER_DESC_LONG
-                for word in string_split
-                if word in food.desc_long.casefold()
+                POINTS_PER_NAME
+                for word in food.name.casefold().split()
+                if word in string_split
             ]
         )
-        if food.common_name:
-            points += sum(
-                [
-                    POINTS_PER_COMMON_NAME
-                    for word in string_split
-                    if word in food.common_name.casefold()
-                ]
-            )
+        if food.common_name and food.common_name.casefold() == string:
+            points += POINTS_ON_COMMON_NAME
         if points > 0:
+            if food.description:
+                points += sum(
+                    [
+                        POINTS_PER_DESCRIPTION
+                        for word in food.description.casefold().split()
+                        if word in string_split
+                    ]
+                )
             result.append((food, points))
     if not result:
-        return []
+        return result
     return sorted(
-        result, key=lambda tup: (tup[1], -len(tup[0].desc_long)), reverse=True
+        result,
+        key=lambda tup: (tup[1], -len(tup[0].name), -len(tup[0].description)),
+        reverse=True,
     )[:n]
 
 
 def match_one_weight(food: Food, measurement: str) -> FoodWeight:
     """Finds best matching weight (FoodWeight object) to a measurement.
 
-    Most of Food objects have common Weight entries, so this function uses difflib.get_close_matches() to find the most matching to the ingredient unit.
+    Most of Food objects have common Weight entries, so this function uses difflib.get_close_matches()
+    to find the most matching to the ingredient unit.
     If there's no match, returns last Weight in the list.
 
     Args:
@@ -83,12 +96,20 @@ def match_one_weight(food: Food, measurement: str) -> FoodWeight:
     """
     if not food.weight.exists():
         raise AttributeError(f"{food} has no weights.")
-    weights = food.weight.filter()
+    weights = food.weight.all()
     matches = get_close_matches(measurement, [w.desc for w in weights], cutoff=0.5)
-    if not matches:
-        return food.weight.last()
-    else:
+    if matches:
         return weights.filter(desc=matches[0])[0]
+    # If couldn't match default measurement then try it's varations
+    if measurement == utils.DEFAULT_MEASUREMENT:
+        for def_measurement in utils.DEFAULT_MEASUREMENT_VARIATIONS:
+            for weight in weights:
+                if def_measurement == utils.singularize(weight.desc):
+                    matches.append(weight.desc)
+    if matches:
+        return weights.filter(desc=matches[0])[0]
+    else:
+        return food.weight.last()
 
 
 def match_one_food(string: str) -> Food:
@@ -100,7 +121,7 @@ def match_one_food(string: str) -> Food:
         Food object.
     """
     res = match_food(string, n=1)
-    return res[0][0] if res else []
+    return res[0][0] if res else None
 
 
 def parse_ingredient(string: str) -> dict:
@@ -110,10 +131,11 @@ def parse_ingredient(string: str) -> dict:
         string: A string to be parsed.
     Returns:
         Dictionary:
-            'amount': float 
+            'amount': float
             'unit': str (may be empty)
             'measurement': str (may be empty) 
             'name': str
+            'raw': str
     Raises:
         ValueError: When string is empty.
     """
@@ -123,34 +145,39 @@ def parse_ingredient(string: str) -> dict:
 def naive_parse_ingredient(string: str) -> dict:
     """Parses string and returns unit, amount, measurement and name of ingredient
 
-    It is a very basic and naive implementation of parsing a string (ingredient). Based on simple checks if
-    string starts with an amount or with a unit, etc. Ideally would be implemented with CRF (e.g. using PyStruct).
+    It is a very basic and naive implementation of parsing a string (ingredient).
+    Based on simple checks if string starts with an amount or with a unit, etc.
+    Ideally would be implemented with CRF (e.g. using PyStruct).
 
     Usage example:
     >>> parse_ingredient("1 onion")
-    {'amount': 1.0, 'unit': '', 'measurement': 'serving', 'name': 'onion'}
+    {'amount': 1.0, 'unit': '', 'measurement': 'serving', 'name': 'onion', 'raw': '1 onion'}
 
     >>> parse_ingredient("150 grams of chicken breasts (boneless and skinless)")
-    {'amount': 150.0, 'unit': 'g', 'measurement': '', 'name': 'chicken breast boneless skinless'}
+    {'amount': 150.0, 'unit': 'g', 'measurement': '', 'name': 'chicken breast boneless skinless', 'raw': '150 grams of chicken breasts (boneless and skinless)'}
 
     Args:
         string: A string to be parsed.
     Returns:
         Dictionary:
-            'amount': float 
+            'amount': float
             'unit': str (may be empty)
-            'measurement': str (may be empty) 
+            'measurement': str (may be empty)
             'name': str
+            'raw': str
     Raises:
-        ValueError: When string is empty.
+        ParseIngredientError: When string is empty.
     """
     if not string:
-        raise ValueError("String cannot be empty.")
+        raise ParseIngredientError(string, "String cannot be empty.")
+    raw = string
     string = utils.strip_special_chars(string)
     string = utils.separate_letters_from_numbers(string)
     string = utils.remove_or_ingredients(string)
     string = utils.strip_stop_words(string)
     string = utils.convert_range_to_one_amount(string)
+    if not string:  # Re-check in case of invalid strings like "$$" etc.
+        raise ParseIngredientError(raw, "String is not valid.")
     string_split = string.split()
 
     amount = 0
@@ -227,4 +254,5 @@ def naive_parse_ingredient(string: str) -> dict:
         "unit": unit,
         "measurement": measurement,
         "name": name,
+        "raw": raw,
     }

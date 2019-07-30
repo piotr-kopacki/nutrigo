@@ -2,6 +2,7 @@ import pytest
 from django.core.cache import cache
 from django.shortcuts import reverse
 from rest_framework.test import APIClient
+
 from core.recipe import recipe_sites
 
 client = APIClient()
@@ -55,6 +56,43 @@ def test_cache(settings):
     assert cache.get(url) is not None
 
 
-def test_recipe_websites_view(client):
-    data = client.get(reverse('recipe-websites-view'))
-    assert data.context['supported_websites'] == recipe_sites.keys()
+@pytest.mark.django_db
+class TestCalculateFromTextApiView:
+    url = reverse("calculate-from-text")
+    client = APIClient()
+
+    def test_return_400_when_invalid_ingredients(self):
+        """Ensure that view returns HTTP 400 when given invalid ingredients parameter"""
+        # blank ingredients
+        response = self.client.post(self.url, {})
+        assert response.status_code == 400
+        # integer (not a string or array-like)
+        response = self.client.post(self.url, {"ingredients": 5}, format="json")
+        assert response.status_code == 400
+
+    def test_return_400_when_invalid_servings(self):
+        """Ensure that view returns HTTP 400 when given invalid servings parameter"""
+        # lower than 1
+        response = self.client.post(self.url, {"ingredients": "abc", "servings": 0}, format="json")
+        assert response.status_code == 400
+        # not an integer
+        response = self.client.post(self.url, {"ingredients": "abc", "servings": 1.5}, format="json")
+        assert response.status_code == 400
+    
+    def test_return_200_when_valid_ingredients(self):
+        """Ensure that view can return HTTP 200 when given valid ingredients"""
+        # list
+        response = self.client.post(self.url, {"ingredients": ["abc"]}, format="json")
+        assert response.status_code == 200
+        # tuple
+        response = self.client.post(self.url, {"ingredients": ("abc",)}, format="json")
+        assert response.status_code == 200
+    
+    def test_view_splits_ingredients_correctly(self):
+        """Ensure that ingredients are split according to the type"""
+        # list
+        response = self.client.post(self.url, {"ingredients": ["abc", "def"]}, format="json")
+        assert response.data["ingredients"] == ["abc", "def"]
+        # tuple
+        response = self.client.post(self.url, {"ingredients": ("abc", "def")}, format="json")
+        assert response.data["ingredients"] == ["abc", "def"]

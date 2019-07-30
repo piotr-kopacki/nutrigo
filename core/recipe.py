@@ -46,7 +46,7 @@ class RecipeSite:
         ingredients = (
             self.get_list_of_ingredients()
             if self.language == "en"
-            else utils.translate_list_of_ingredients(self.get_list_of_ingredients())
+            else utils.translate_many(self.get_list_of_ingredients())
         )
         return {
             "title": title,
@@ -83,8 +83,8 @@ class KwestiaSmaku(RecipeSite):
             "div",
             "field field-name-field-skladniki field-type-text-long field-label-hidden",
         )
-        ingredients_list = ingredients_div.find_all("li")
-        return [ing.get_text().strip() for ing in ingredients_list]
+        ingredient_list = ingredients_div.find_all("li")
+        return [ing.get_text().strip() for ing in ingredient_list]
 
     def get_count_of_servings(self):
         servings_div = self.soup.find(
@@ -102,7 +102,7 @@ class KwestiaSmaku(RecipeSite):
             "div",
             "field field-name-field-skladniki field-type-text-long field-label-hidden",
         )
-        return True if ingredients_div else False
+        return bool(ingredients_div)
 
 
 class Yummly(RecipeSite):
@@ -111,8 +111,8 @@ class Yummly(RecipeSite):
         return title.get_text().strip()
 
     def get_list_of_ingredients(self):
-        ingredients_list = self.soup.find_all("li", {"class": "IngredientLine"})
-        return [ing.get_text().strip() for ing in ingredients_list]
+        ingredient_list = self.soup.find_all("li", {"class": "IngredientLine"})
+        return [ing.get_text().strip() for ing in ingredient_list]
 
     def get_count_of_servings(self):
         servings = self.soup.find("div", {"class": "servings"})
@@ -121,8 +121,8 @@ class Yummly(RecipeSite):
         return 1
 
     def is_valid(self):
-        ingredients_list = self.soup.find_all("li", {"class": "IngredientLine"})
-        return True if ingredients_list else False
+        ingredient_list = self.soup.find_all("li", {"class": "IngredientLine"})
+        return bool(ingredient_list)        
 
 
 recipe_sites = {

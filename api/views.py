@@ -1,28 +1,64 @@
 import requests
-from django.core.cache import cache
 from django.conf import settings
+from django.core.cache import cache
 from django.views.generic import TemplateView
 from rest_framework import status
-from rest_framework.generics import RetrieveAPIView
-from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core import utils
-from core.ingredient import (Ingredient, IngredientList, IngredientError)
+from core.ingredient import IngredientList
 from core.recipe import recipe_sites
+
+from api.serializers import IngredientsSerializer
 
 
 class IndexView(TemplateView):
-    template_name = "api/index.html"
+    template_name = "api/calc_from_text.html"
 
-class RecipeWebsitesView(TemplateView):
-    template_name = "api/websites.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['supported_websites'] = recipe_sites.keys()
-        return context
+class AboutView(TemplateView):
+    template_name = "api/about.html"
+
+class CalculateFromText(APIView):
+    """
+    POST Only.
+    Calculates nutrition for a user's recipe.
+
+    Parameters:
+        :ingredients - List of ingredients
+        :servings - (Optional) Number of servings, default 1
+    Returns:
+        :ingredients - List of ingredients provided by user
+        :bad - List of ingredients which couldn't be parsed
+        :servings - Number of servings
+        :nutrition - list of nutrients
+            :name - name of nutrient
+                :value - value for whole recipe
+                :value_per_serving - value per serving
+                :unit - unit of nutrient
+    """
+
+    serializer_class = IngredientsSerializer
+
+    def post(self, request):
+        """Returns nutritional analysis for recipe"""
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+        servings = request.data.get("servings", 1)
+        user_ingr = request.data.get("ingredients")
+        ingredients = IngredientList(user_ingr)
+        response_data = {
+            "ingredients": user_ingr,
+            "bad": ingredients.bad,
+            "servings": servings,
+            "nutrition": ingredients.total_nutrition(servings),
+        }
+        return Response(response_data)
+
 
 class CalculateFromURL(APIView):
     """
@@ -42,8 +78,7 @@ class CalculateFromURL(APIView):
         recipe_url = request.data.get("url", None)
         if not recipe_url:
             return Response(
-                {"error": "URL cannot be empty."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "URL cannot be empty."}, status=status.HTTP_400_BAD_REQUEST
             )
         # If cached, return data
         cached = cache.get(recipe_url, None)
@@ -67,25 +102,24 @@ class CalculateFromURL(APIView):
         parser = recipe_sites[recipe_domain](recipe_request)
         if not parser.is_valid():
             return Response(
-                {
-                    "error": f"URL '{recipe_url}' is not a valid recipe."
-                },
+                {"error": f"URL '{recipe_url}' is not a valid recipe."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # Getting data
         # TODO: Catch exceptions and log them
         parsed = parser.get_data()
-        ingredient_list = IngredientList(parsed['ingredients'])
+        ingredient_list = IngredientList(parsed["ingredients"])
         # Creating response
         response_data = {
-            'url': recipe_url,
-            'title': parsed['title'],
-            'servings': parsed['servings'],
-            'total_nutrition': ingredient_list.total_nutrition(),
-            'serving_nutrition': ingredient_list.total_nutrition(parsed['servings']),
+            "url": recipe_url,
+            "title": parsed["title"],
+            "servings": parsed["servings"],
+            "total_nutrition": ingredient_list.total_nutrition(parsed["servings"]),
         }
         if settings.DEBUG:
-            response_data['ingredients'] = [(ing.matched_food.desc_long, ing.weight) for ing in ingredient_list.all]
+            response_data["ingredients"] = [
+                (ing.matched_food.desc_long, ing.weight) for ing in ingredient_list.all
+            ]
         # Cache response
         # TODO: Add proper versioning for cache (e.g. version it using MINOR version from Semantic Versioning)
         cache.set(recipe_url, response_data, version=1)

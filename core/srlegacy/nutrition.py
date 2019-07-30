@@ -13,8 +13,8 @@ DATA_COLUMN_NAMES = ( # Corresponding origin column names to model fields
     'Ref_NDB_No',     # -
     'Add_Nutr_Mark',  # -
     'Num_Studies',    # -
-    'Min',            # min_val
-    'Max',            # max_val
+    'Min',            # -
+    'Max',            # -
     'DF',             # -
     'Low_EB',         # -
     'Up_EB',          # -
@@ -64,8 +64,6 @@ DATA_COLUMN_TO_FIELD = {
     'NDB_No':   'food',
     'Nutr_No':  'def_id',
     'Nutr_Val': 'value',
-    'Min':      'min_val',
-    'Max':      'max_val'
 }
 
 DEF_COLUMN_TO_FIELD = {

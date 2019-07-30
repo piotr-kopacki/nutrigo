@@ -1,12 +1,12 @@
 <h1 align="center">nutrigo</h1>
 <p align="center">Calculate nutrition for your favourite recipe!</p>
 <p align="center">
-  <img alt="Coveralls github branch" src="https://img.shields.io/coveralls/github/MakuZo/nutrigo/master.svg">
-<img alt="Travis (.com)" src="https://img.shields.io/travis/com/MakuZo/nutrigo/master.svg">
+  <img alt="Coveralls github branch" src="https://img.shields.io/coveralls/github/MakuZo/nutrigo/1.0.0-dev">
+<img alt="Travis (.com)" src="https://img.shields.io/travis/com/MakuZo/nutrigo/1.0.0-dev.svg">
 </p>
 <p align="center">Try live <a href="https://nutrigo.makuzo.usermd.net">here</a></p>
 <p align="center">
-<img align="center" width="70%" height="70%" src="https://i.imgur.com/3YKGyEt.jpg"></img>
+<img align="center" width="70%" height="70%" src="https://i.imgur.com/7zhqcxq.jpg"></img>
 </p>
 
 ## Overview
@@ -18,10 +18,10 @@ Nevertheless it provides good results for well-structured and uncomplicated reci
 
 nutrigo requires [Python](https://www.python.org/) 3.6+ to run.
 
-Install the dependencies, download WordNet and run the server.
+Install the dependencies, download corpora and run the server.
 
 ```sh
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 $ python3 -m textblob.download_corpora
 $ python3 manage.py runserver
 ```
@@ -38,7 +38,8 @@ $ docker run --rm -it -p 8000:8000 nutrigo
 ```
 
 ## Supported websites
-
+--Note that parsing third-party websites is only possible by using API Endpoint /api/calculate-from-url
+  
 So far the only supported websites are:
 Yummly.com, KwestiaSmaku.com
 
@@ -52,7 +53,7 @@ $ pytest
 
 ## Contribution
 
-Feel free to contribute to the project by making pull requests!
+Feel free to contribute to the project by creating pull requests!
 
 ## Built With
 
