@@ -192,40 +192,40 @@ def naive_parse_ingredient(string: str) -> dict:
         and string_split[0].isnumeric()
         and utils.is_decimal_amount(string_split[1])
     ):
-        # 1.0 - Case when 1st and 2nd words are amount (2nd is decimal) e.g. '1 1/2 ...'
+        # 1.0 - 1st and 2nd word are amounts (2nd is decimal)
         amount = list(map(int, string_split[1].split("/")))
         amount = amount[0] / amount[1]
         amount = amount + int(string_split[0])
         if len(string_split) > 2 and utils.is_measure_or_unit(string_split[2]):
-            # 1.1 - Case when 1st and 2nd word is a decimal amount, 3nd word is a unit and the rest is name
+            # 1.1 - With unit e.g '1 1/2 cup of flour'
             if utils.is_measurement(string_split[2]):
                 measurement = string_split[2]
             else:
                 unit = utils.get_unit(string_split[2])
             name = utils.singularize(" ".join(string_split[3:]))
         else:
-            # 1.2 - Case when 1st and 2nd word is an amount and the rest is name
+            # 1.2 - No unit e.g. '1 1/2 of chicken breast'
             measurement = utils.DEFAULT_MEASUREMENT
             name = utils.singularize(" ".join(string_split[2:]))
     elif utils.is_decimal_amount(string_split[0]):
-        # 2.0 - Case when 1st word is a decimal amount e.g. '1/2 ...'
+        # 2.0 - 1st word is a decimal amount (and 2nd is not)
         amount = list(map(int, string_split[0].split("/")))
         amount = amount[0] / amount[1]
         if len(string_split) > 1 and utils.is_measure_or_unit(string_split[1]):
-            # 2.1 - Case when 1st word is a decimal amount, 2nd word is a unit and the rest is name
+            # 2.1 - With unit e.g. '1/2 cup of flour'
             if utils.is_measurement(string_split[1]):
                 measurement = string_split[1]
             else:
                 unit = utils.get_unit(string_split[1])
             name = utils.singularize(" ".join(string_split[2:]))
         else:
-            # 2.2 - Case when 1st word is a decimal amount and the rest is name
+            # 2.2 - No unit e.g. '1/2 of chicken breast'
             measurement = utils.DEFAULT_MEASUREMENT
             name = utils.singularize(" ".join(string_split[1:]))
     elif string_split[0].isnumeric():
-        # 3.0 - Case when 1st word is numeric and the rest is not numeric
+        # 3.0 - 1st word is an integer amount
         if len(string_split) > 1 and utils.is_measure_or_unit(string_split[1]):
-            # 3.1 - Case when 1st word is an amount, 2nd word is a unit and the rest is name
+            # 3.1 - With unit e.g. '1 cup of flour'
             amount = int(string_split[0])
             if utils.is_measurement(string_split[1]):
                 measurement = string_split[1]
@@ -233,14 +233,14 @@ def naive_parse_ingredient(string: str) -> dict:
                 unit = utils.get_unit(string_split[1])
             name = utils.singularize(" ".join(string_split[2:]))
         else:
-            # 3.2 - Case when 1st word is an amount and the rest is name
+            # 3.2 - No unit e.g. '1 chicken breast'
             amount = int(string_split[0])
             measurement = utils.DEFAULT_MEASUREMENT
             name = utils.singularize(" ".join(string_split[1:]))
     else:
-        # 4.0 - Case when 1st word is not an amount
+        # 4.0 - 1st word is not an amount
         if utils.is_measure_or_unit(string_split[0]):
-            # 4.1 - Case when 1st word is a unit and the rest is name
+            # 4.1 - With unit e.g. 'cup of flour'
             amount = 1
             if utils.is_measurement(string_split[0]):
                 measurement = string_split[0]
@@ -248,7 +248,7 @@ def naive_parse_ingredient(string: str) -> dict:
                 unit = utils.get_unit(string_split[0])
             name = utils.singularize(" ".join(string_split[1:]))
         else:
-            # 4.2 - Case when whole string is a name
+            # 4.2 - No unit e.g. 'chicken breast'
             amount = 1
             measurement = utils.DEFAULT_MEASUREMENT
             name = utils.singularize(" ".join(string_split[0:]))
