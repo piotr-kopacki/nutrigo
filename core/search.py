@@ -1,6 +1,5 @@
 from difflib import get_close_matches
 
-from django.core.cache import cache
 from django.db.models import Q
 
 from core import utils
