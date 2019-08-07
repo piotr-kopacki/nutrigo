@@ -1,3 +1,7 @@
+"""
+This module contains all functions that are used to
+parse user's input and match it to objects in database.
+"""
 from difflib import get_close_matches
 
 from django.db.models import Q
