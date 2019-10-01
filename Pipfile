@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pytest-django = "*"
+
+[packages]
+djangorestframework = "==3.9.3"
+textblob = "*"
+requests = "*"
+beautifulsoup4 = "==4.7.1"
+lxml = "==4.3.2"
+python-decouple = "==3.1"
+python-memcached = "==1.59"
+Django = ">=2.2.3"
+
+[requires]
+python_version = "3.7"

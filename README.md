@@ -18,10 +18,10 @@ Nevertheless it provides good results for well-structured and uncomplicated reci
 
 nutrigo requires [Python](https://www.python.org/) 3.6+ to run.
 
-Install the dependencies, download corpora and run the server.
+Install the dependencies using [Pipenv](https://github.com/pypa/pipenv), download corpora and run the server.
 
 ```sh
-$ pip3 install -r requirements.txt
+$ pipenv install --dev
 $ python3 -m textblob.download_corpora
 $ python3 manage.py runserver
 ```
@@ -58,6 +58,7 @@ Feel free to contribute to the project by creating pull requests!
 ## Built With
 
 * [Django](https://www.djangoproject.com/) - Python Web framework
+* [Django REST framework](https://www.django-rest-framework.org/) - Django REST framework
 
 ## License
 
