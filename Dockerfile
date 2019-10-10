@@ -1,12 +1,12 @@
-FROM python:3
+FROM python:3.7
 
-EXPOSE 8000
+ENV PYTHONUNBUFFERED 1
 
-COPY ./ ./
+WORKDIR /code
 
-RUN pip install -r requirements.txt
+COPY . /code/
 
-# Problematic line
-RUN python -m textblob.download_corpora
+RUN pip install pipenv
+RUN pipenv install --sequential --deploy --ignore-pipfile --dev
+RUN pipenv run python -m textblob.download_corpora
 
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000"]
