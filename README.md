@@ -30,11 +30,11 @@ $ python3 manage.py runserver
 
 Open your web browser, type ```localhost:8000``` and enter recipe url.
 
-## Running with docker
+## Running with Docker Compose
 
 ```sh
-$ docker build -t nutrigo .
-$ docker run --rm -it -p 8000:8000 nutrigo
+$ docker-compose build nutrigo
+$ docker-compose up nutrigo
 ```
 
 ## Supported websites
