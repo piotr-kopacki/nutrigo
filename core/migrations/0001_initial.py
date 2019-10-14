@@ -7,24 +7,57 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Food',
+            name="Food",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('desc_long', models.CharField(max_length=200)),
-                ('desc_short', models.CharField(max_length=60)),
-                ('common_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('manufac_name', models.CharField(blank=True, max_length=65, null=True)),
-                ('refuse_perc', models.IntegerField(blank=True, null=True)),
-                ('sci_name', models.CharField(blank=True, max_length=65, null=True)),
-                ('n_factor', models.DecimalField(blank=True, decimal_places=2, max_digits=4, null=True)),
-                ('pro_factor', models.DecimalField(blank=True, decimal_places=2, max_digits=4, null=True)),
-                ('fat_factor', models.DecimalField(blank=True, decimal_places=2, max_digits=4, null=True)),
-                ('cho_factor', models.DecimalField(blank=True, decimal_places=2, max_digits=4, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("desc_long", models.CharField(max_length=200)),
+                ("desc_short", models.CharField(max_length=60)),
+                (
+                    "common_name",
+                    models.CharField(blank=True, max_length=100, null=True),
+                ),
+                (
+                    "manufac_name",
+                    models.CharField(blank=True, max_length=65, null=True),
+                ),
+                ("refuse_perc", models.IntegerField(blank=True, null=True)),
+                ("sci_name", models.CharField(blank=True, max_length=65, null=True)),
+                (
+                    "n_factor",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=4, null=True
+                    ),
+                ),
+                (
+                    "pro_factor",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=4, null=True
+                    ),
+                ),
+                (
+                    "fat_factor",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=4, null=True
+                    ),
+                ),
+                (
+                    "cho_factor",
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=4, null=True
+                    ),
+                ),
             ],
-        ),
+        )
     ]

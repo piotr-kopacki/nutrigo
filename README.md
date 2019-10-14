@@ -39,7 +39,7 @@ $ docker-compose up nutrigo
 
 ## Supported websites
 --Note that parsing third-party websites is only possible by using API Endpoint /api/calculate-from-url
-  
+
 So far the only supported websites are:
 Yummly.com, KwestiaSmaku.com
 

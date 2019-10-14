@@ -51,11 +51,13 @@ class TestUtils:
             utils.translate("kurczak", "en")
 
     def test_translate_many(self):
-        assert utils.translate_many(['kurczak', 'cebula'], "pl") == ['chicken', 'onion']
+        assert utils.translate_many(["kurczak", "cebula"], "pl") == ["chicken", "onion"]
 
     def test_convert_range_to_one_amount(self):
-        assert utils.convert_range_to_one_amount('100 - 200 g of chicken breast') == "200 g of chicken breast"
-    
+        assert (
+            utils.convert_range_to_one_amount("100 - 200 g of chicken breast")
+            == "200 g of chicken breast"
+        )
 
     def test_singularize(self):
         for unit in utils.all_units:
@@ -109,29 +111,53 @@ class TestUtils:
             assert m not in utils.stop_words
         for u in utils.all_units:
             assert u not in utils.stop_words
-    
+
     def test_separate_letters_and_numbers(self):
-        assert utils.separate_letters_from_numbers("1kg of chicken") == "1 kg of chicken"
+        assert (
+            utils.separate_letters_from_numbers("1kg of chicken") == "1 kg of chicken"
+        )
         assert utils.separate_letters_from_numbers("abc1234abc") == "abc 1234 abc"
         assert utils.separate_letters_from_numbers("1234 1234abc") == "1234 1234 abc"
         assert utils.separate_letters_from_numbers("1 1/2") == "1 1/2"
         assert utils.separate_letters_from_numbers("1.2") == "1.2"
         assert utils.separate_letters_from_numbers("1/2 1.2 1") == "1/2 1.2 1"
         assert utils.separate_letters_from_numbers("25%") == "25%"
-        assert utils.separate_letters_from_numbers("1/2 cup of 3.25% milk") == "1/2 cup of 3.25% milk"
-    
+        assert (
+            utils.separate_letters_from_numbers("1/2 cup of 3.25% milk")
+            == "1/2 cup of 3.25% milk"
+        )
+
     def test_get_domain_from_url(self):
-        assert utils.get_domain_from_url("https://www.example.com/example/example.html") == "example.com"
-        assert utils.get_domain_from_url("http://example.com/example/example.html") == "example.com"
+        assert (
+            utils.get_domain_from_url("https://www.example.com/example/example.html")
+            == "example.com"
+        )
+        assert (
+            utils.get_domain_from_url("http://example.com/example/example.html")
+            == "example.com"
+        )
         assert utils.get_domain_from_url("http://example.com/") == "example.com"
-    
+
     def test_remove_or_ingredients(self):
-        assert utils.remove_or_ingredients("1/2 small eggplant or a few mushrooms or half a small zucchini or half a pepper") == "1/2 small eggplant"
+        assert (
+            utils.remove_or_ingredients(
+                "1/2 small eggplant or a few mushrooms or half a small zucchini or half a pepper"
+            )
+            == "1/2 small eggplant"
+        )
         assert utils.remove_or_ingredients("a small corn") == "a small corn"
-    
+
     def test_split_and_ingredients(self):
-        assert utils.split_and_ingredients(['salt and pepper', 'water']) == ['salt', 'pepper', 'water']
-        assert utils.split_and_ingredients(['grand banana']) == ['grand banana']
-        assert utils.split_and_ingredients(['2 and a half glasses of milk']) == ['2 and a half glasses of milk']
-        assert utils.split_and_ingredients(['2 and 1/2 glasses of milk']) == ['2 and 1/2 glasses of milk']
+        assert utils.split_and_ingredients(["salt and pepper", "water"]) == [
+            "salt",
+            "pepper",
+            "water",
+        ]
+        assert utils.split_and_ingredients(["grand banana"]) == ["grand banana"]
+        assert utils.split_and_ingredients(["2 and a half glasses of milk"]) == [
+            "2 and a half glasses of milk"
+        ]
+        assert utils.split_and_ingredients(["2 and 1/2 glasses of milk"]) == [
+            "2 and 1/2 glasses of milk"
+        ]
         assert utils.split_and_ingredients(["1 egg,,,,"]) == ["1 egg,,,,"]

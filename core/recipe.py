@@ -17,6 +17,7 @@ class RecipeSite:
         - get_list_of_ingredients()
         - get_count_of_servings()
     """
+
     language = "en"
 
     def __init__(self, request: requests.request):
@@ -48,11 +49,7 @@ class RecipeSite:
             if self.language == "en"
             else utils.translate_many(self.get_list_of_ingredients())
         )
-        return {
-            "title": title,
-            "servings": servings,
-            "ingredients": ingredients,
-        }
+        return {"title": title, "servings": servings, "ingredients": ingredients}
 
     def get_recipe_title(self) -> str:
         """This method should return recipe title by parsing request."""
@@ -122,10 +119,7 @@ class Yummly(RecipeSite):
 
     def is_valid(self):
         ingredient_list = self.soup.find_all("li", {"class": "IngredientLine"})
-        return bool(ingredient_list)        
+        return bool(ingredient_list)
 
 
-recipe_sites = {
-    "kwestiasmaku.com": KwestiaSmaku,
-    "yummly.com": Yummly,
-}
+recipe_sites = {"kwestiasmaku.com": KwestiaSmaku, "yummly.com": Yummly}
