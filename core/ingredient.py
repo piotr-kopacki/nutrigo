@@ -113,7 +113,7 @@ class Ingredient:
     """Parses and stores data about an ingredient.
 
     Class which parses ingredient and stores data about it's weight, amount, nutrition, etc..
-    Raises IngredientError if parser couldn't match a Food in database or Food doesn't have any 
+    Raises IngredientError if parser couldn't match a Food in database or Food doesn't have any
     FoodWeight to be selected.
 
     Example usage:

@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('core', '0002_foodweight'),
-    ]
+    dependencies = [("core", "0002_foodweight")]
 
     operations = [
         migrations.AlterField(
-            model_name='foodweight',
-            name='weight',
+            model_name="foodweight",
+            name="weight",
             field=models.DecimalField(decimal_places=2, max_digits=7),
-        ),
+        )
     ]

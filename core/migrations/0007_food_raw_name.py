@@ -5,15 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('core', '0006_auto_20190421_1833'),
-    ]
+    dependencies = [("core", "0006_auto_20190421_1833")]
 
     operations = [
         migrations.AddField(
-            model_name='food',
-            name='raw_name',
-            field=models.CharField(default='abc', max_length=100),
+            model_name="food",
+            name="raw_name",
+            field=models.CharField(default="abc", max_length=100),
             preserve_default=False,
-        ),
+        )
     ]

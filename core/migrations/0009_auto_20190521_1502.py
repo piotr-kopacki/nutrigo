@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('core', '0008_auto_20190426_1611'),
-    ]
+    dependencies = [("core", "0008_auto_20190426_1611")]
 
     operations = [
         migrations.AlterField(
-            model_name='food',
-            name='description',
-            field=models.CharField(default='', max_length=200),
-        ),
+            model_name="food",
+            name="description",
+            field=models.CharField(default="", max_length=200),
+        )
     ]

@@ -4,9 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = "==19.3b0"
 pytest = "*"
 pytest-cov = "*"
 pytest-django = "*"
+flake8 = "*"
+bandit = "*"
+isort = "*"
+pre-commit = "*"
 
 [packages]
 djangorestframework = "==3.9.3"

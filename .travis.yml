@@ -12,5 +12,7 @@ install:
 # command to run tests
 script:
   - pytest
+  - flake8
+  - bandit -n 3 -lll -r .
 after_success:
   - coveralls

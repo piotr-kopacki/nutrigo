@@ -5,15 +5,15 @@ class Food(models.Model):
     """
     Model for Food object (from 'FOOD_DES' table).
 
-    :name         - 100-character name of product, should be concise 
-                    (no adjectives etc.). It's the main field that will be 
+    :name         - 100-character name of product, should be concise
+                    (no adjectives etc.). It's the main field that will be
                     used when matching ingredients from recipes to products from db.
     :raw_name     - Original long description of product from USDA's database
-    :description  - 200-character description of food item 
+    :description  - 200-character description of food item
                     (e.g if it's raw or cooked, skin only, etc.)
     :common_name  - Other names commonly used to describe a food,
                     including local or regional names, such as “soda” or
-                    “pop” for “carbonated beverages”. May also be used to declare 
+                    “pop” for “carbonated beverages”. May also be used to declare
                     default product for a category.
     :n_factor     - Factor for converting nitrogen to protein amounts
     :pro_factor   - Factor for calculating calories from protein amounts
@@ -67,7 +67,7 @@ class FoodWeight(models.Model):
 class FoodNutrition(models.Model):
     """
     FoodNutrition model contains the nutrient values of Food.
-    
+
     :food    - Food object
     :desc    - Name of nutrient/food component
     :value   - Amount in 100 g, edible portion

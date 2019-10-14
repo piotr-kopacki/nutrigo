@@ -10,9 +10,7 @@ class TestSearch:
         sample_weight1 = models.FoodWeight.objects.create(
             food=food, amount=1, desc="pinch", value=1
         )
-        sample_weight2 = models.FoodWeight.objects.create(
-            food=food, amount=1, desc="piece", value=1
-        )
+        models.FoodWeight.objects.create(food=food, amount=1, desc="piece", value=1)
         # Chicken has no 'serving' weight so it should return last weight in the list
         assert search.match_one_weight(food, "serving") == food.weight.last()
         # Food with no weights should raise an Exception when matching weights
@@ -24,21 +22,17 @@ class TestSearch:
     def test_match_one_weight_returns_last_if_no_match(self):
         """Ensure that if match_one_weight can't match a weight it returns last in the list"""
         f = models.Food.objects.create(name="Chicken")
-        w1 = models.FoodWeight.objects.create(
-            food=f, amount=1, desc="pinch", value=1
-        )
-        w2 = models.FoodWeight.objects.create(
-            food=f, amount=1, desc="cup", value=1
-        )
-        assert search.match_one_weight(f, 'teaspoon').id == w2.id
+        models.FoodWeight.objects.create(food=f, amount=1, desc="pinch", value=1)
+        w2 = models.FoodWeight.objects.create(food=f, amount=1, desc="cup", value=1)
+        assert search.match_one_weight(f, "teaspoon").id == w2.id
 
     def test_match_one_food(self):
         food = models.Food.objects.create(name="Chicken")
         assert search.match_one_food("chicken").id == food.id
-        assert search.match_one_food("") == None
+        assert search.match_one_food("") is None
 
     def test_common_name_prevalence(self):
-        food1 = models.Food.objects.create(name="Salt")
+        models.Food.objects.create(name="Salt")
         food2 = models.Food.objects.create(name="Salt", common_name="Salt")
         assert search.match_one_food("Salt").id == food2.id
 
@@ -50,13 +44,13 @@ class TestSearch:
         assert isinstance(res[0][0], models.Food)
         assert isinstance(res[0][1], int)
         assert search.match_food("") == []
-    
+
     def test_match_food_with_description(self):
         """Ensure that foods description is taken into account when matching"""
-        f1 = models.Food.objects.create(name="Pepper", description="red")
+        models.Food.objects.create(name="Pepper", description="red")
         f2 = models.Food.objects.create(name="Pepper", description="green")
         assert search.match_food("green pepper")[0][0].id == f2.id
-    
+
     def test_parse_ingredient_handles_bad_input(self):
         """Ensure that parse_ingredient raises ValueError when given bad input (like '$$')"""
         with pytest.raises(search.ParseIngredientError):
@@ -112,7 +106,7 @@ class TestSearch:
             "unit": "cup",
             "measurement": "",
             "name": "vegetable shortening deep frying",
-            "raw": "3 cups vegetable shortening for deep frying"
+            "raw": "3 cups vegetable shortening for deep frying",
         }
         assert search.parse_ingredient("1/4 cup all-purpose flour") == {
             "amount": 0.25,
@@ -140,7 +134,7 @@ class TestSearch:
             "unit": "",
             "measurement": "slice",
             "name": "onion",
-            "raw": "1/2 slice of onion"
+            "raw": "1/2 slice of onion",
         }
         assert search.parse_ingredient("slice of ham") == {
             "amount": 1,
@@ -163,7 +157,7 @@ class TestSearch:
             "unit": "",
             "measurement": "dash",
             "name": "hot pepper sauce Frank RedHot",
-            "raw": "1 dash hot pepper sauce (such as Frank's RedHot®), or to taste"
+            "raw": "1 dash hot pepper sauce (such as Frank's RedHot®), or to taste",
         }
         assert search.parse_ingredient("1 1/2 apples") == {
             "amount": 1.5,

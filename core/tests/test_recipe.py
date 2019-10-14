@@ -7,7 +7,7 @@ from core.recipe import KwestiaSmaku, RecipeSite, recipe_sites
 class TestRecipe:
     def test_base_class(self):
         with pytest.raises(NotImplementedError):
-            r = RecipeSite(requests.Request())
+            RecipeSite(requests.Request())
 
     def test_is_recipes_sites_a_dict(self):
         assert isinstance(recipe_sites, dict)
@@ -42,10 +42,12 @@ class TestRecipe:
                 p.get_list_of_ingredients()
                 p.get_recipe_title()
             except NotImplementedError:
-                pytest.fail(f"Not all parsers override needed methods. ({parser.__name__})")
-            except:
+                pytest.fail(
+                    f"Not all parsers override needed methods. ({parser.__name__})"
+                )
+            except Exception:
                 continue
-    
+
     def test_kwestia_smaku(self):
         request = requests.Request()
         request.text = r"""<html><body>
@@ -54,16 +56,16 @@ class TestRecipe:
         <div class="field field-name-field-skladniki field-type-text-long field-label-hidden">
         <ul>
         <li>150 g chicken breast</li>
-        <li>1 red pepper</li></ul>  
+        <li>1 red pepper</li></ul>
         </div>
         </body></html>"""
-        
+
         parser = KwestiaSmaku(request)
 
         assert parser.get_recipe_title() == "TITLE"
         assert parser.get_count_of_servings() == 2
         assert parser.get_list_of_ingredients() == [
             "150 g chicken breast",
-            "1 red pepper"
+            "1 red pepper",
         ]
         assert parser.is_valid()

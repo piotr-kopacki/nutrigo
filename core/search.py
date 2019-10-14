@@ -29,7 +29,7 @@ def match_food(string: str, n: int = 5) -> list:
     Then sorts the results by:
         1. Scored points (More is better)
         2. Length of long description (Less is better)
-    
+
     Args:
         string: A string to be matched with Food.
         n: Number of objects to return (default is 5)
@@ -136,7 +136,7 @@ def parse_ingredient(string: str) -> dict:
         Dictionary:
             'amount': float
             'unit': str (may be empty)
-            'measurement': str (may be empty) 
+            'measurement': str (may be empty)
             'name': str
             'raw': str
     Raises:

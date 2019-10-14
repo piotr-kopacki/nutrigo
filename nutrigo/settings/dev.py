@@ -1,11 +1,8 @@
+# flake8: noqa
 from .base import *
 
 DEBUG = True
-SECRET_KEY = "DEVELOPMENT_SECRET_KEY"
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = "DEVELOPMENT"  # nosec
+ALLOWED_HOSTS = ["*"]
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}

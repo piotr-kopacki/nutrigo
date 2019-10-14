@@ -5,65 +5,31 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('core', '0005_foodnutrition'),
-    ]
+    dependencies = [("core", "0005_foodnutrition")]
 
     operations = [
         migrations.RenameField(
-            model_name='foodweight',
-            old_name='weight',
-            new_name='value',
+            model_name="foodweight", old_name="weight", new_name="value"
         ),
-        migrations.RemoveField(
-            model_name='food',
-            name='desc_long',
-        ),
-        migrations.RemoveField(
-            model_name='food',
-            name='desc_short',
-        ),
-        migrations.RemoveField(
-            model_name='food',
-            name='manufac_name',
-        ),
-        migrations.RemoveField(
-            model_name='food',
-            name='refuse_perc',
-        ),
-        migrations.RemoveField(
-            model_name='food',
-            name='sci_name',
-        ),
-        migrations.RemoveField(
-            model_name='foodnutrition',
-            name='max_val',
-        ),
-        migrations.RemoveField(
-            model_name='foodnutrition',
-            name='min_val',
-        ),
-        migrations.RemoveField(
-            model_name='foodweight',
-            name='data_points',
-        ),
-        migrations.RemoveField(
-            model_name='foodweight',
-            name='deviation',
-        ),
-        migrations.RemoveField(
-            model_name='foodweight',
-            name='seq',
-        ),
+        migrations.RemoveField(model_name="food", name="desc_long"),
+        migrations.RemoveField(model_name="food", name="desc_short"),
+        migrations.RemoveField(model_name="food", name="manufac_name"),
+        migrations.RemoveField(model_name="food", name="refuse_perc"),
+        migrations.RemoveField(model_name="food", name="sci_name"),
+        migrations.RemoveField(model_name="foodnutrition", name="max_val"),
+        migrations.RemoveField(model_name="foodnutrition", name="min_val"),
+        migrations.RemoveField(model_name="foodweight", name="data_points"),
+        migrations.RemoveField(model_name="foodweight", name="deviation"),
+        migrations.RemoveField(model_name="foodweight", name="seq"),
         migrations.AddField(
-            model_name='food',
-            name='description',
+            model_name="food",
+            name="description",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='food',
-            name='name',
-            field=models.CharField(default='null', max_length=100),
+            model_name="food",
+            name="name",
+            field=models.CharField(default="null", max_length=100),
             preserve_default=False,
         ),
     ]
