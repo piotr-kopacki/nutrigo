@@ -21,7 +21,7 @@ beautifulsoup4 = "==4.7.1"
 lxml = "==4.3.2"
 python-decouple = "==3.1"
 python-memcached = "==1.59"
-Django = ">=2.2.3"
+Django = ">=2.2.8, <3.0.0"
 
 [requires]
 python_version = "3.7"
