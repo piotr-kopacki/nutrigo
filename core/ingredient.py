@@ -36,9 +36,6 @@ class IngredientList:
         self.all = []
         self.bad = []
 
-        # Index of __next__
-        self._n = 0
-
         ingredient_list = utils.split_and_ingredients(ingredient_list)
         for ing in ingredient_list:
             try:
@@ -49,14 +46,7 @@ class IngredientList:
                 self.bad.append(ing)
 
     def __iter__(self):
-        self._n = 0
-        return self
-
-    def __next__(self):
-        if self._n > len(self.all) - 1:
-            raise StopIteration
-        self._n += 1
-        return self.all[self._n - 1]
+        return iter(self.all)
 
     def __getitem__(self, index):
         return self.all[index]
