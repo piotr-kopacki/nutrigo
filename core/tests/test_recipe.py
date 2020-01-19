@@ -1,7 +1,10 @@
+from unittest.mock import Mock
+
 import pytest
 import requests
+from django.test import SimpleTestCase
 
-from core.recipe import KwestiaSmaku, RecipeSite, recipe_sites
+from core.recipe import KwestiaSmaku, RecipeSite, Yummly, recipe_sites
 
 
 class TestRecipe:
@@ -69,3 +72,41 @@ class TestRecipe:
             "1 red pepper",
         ]
         assert parser.is_valid()
+
+
+class TestYumly(SimpleTestCase):
+    def setUp(self):
+        self.request = Mock()
+        self.request.text = """
+        <h1 class="recipe-title">Recipe title</h1>
+        <li class="IngredientLine">IngredientLine </li>
+        <li class="IngredientLine"> IngredientLine 2</li>
+        <div class="servings">
+            <input value="2">
+        </div>
+        """
+        self.recipe_site = Yummly(self.request)
+
+    def test_get_list_of_ingredients(self):
+        assert self.recipe_site.get_list_of_ingredients() == [
+            "IngredientLine",
+            "IngredientLine 2",
+        ]
+
+    def test_get_count_of_servings(self):
+        assert self.recipe_site.get_count_of_servings() == 2
+
+    def test_get_count_of_servings_not_found(self):
+        self.request.text = self.request.text.replace('class="servings"', "")
+        self.recipe_site = Yummly(self.request)
+
+        assert self.recipe_site.get_count_of_servings() == 1
+
+    def test_is_valid(self):
+        assert self.recipe_site.is_valid() is True
+
+    def test_is_valid_not(self):
+        self.request.text = self.request.text.replace('class="IngredientLine"', "")
+        self.recipe_site = Yummly(self.request)
+
+        assert self.recipe_site.is_valid() is False

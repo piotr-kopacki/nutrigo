@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from core import ingredient, utils
+from core.utils import translate_many
 
 
 class RecipeSite:
@@ -47,7 +47,7 @@ class RecipeSite:
         ingredients = (
             self.get_list_of_ingredients()
             if self.language == "en"
-            else utils.translate_many(self.get_list_of_ingredients())
+            else translate_many(self.get_list_of_ingredients())
         )
         return {"title": title, "servings": servings, "ingredients": ingredients}
 

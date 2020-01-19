@@ -1,6 +1,6 @@
 import json
 
-import core.models
+from core.models import Food, FoodNutrition, FoodWeight
 
 COLUMN_NAMES = (  # Corresponding origin column names to model fields
     "NDB_No",  # id
@@ -64,9 +64,9 @@ def main(filename):
     with open(filename, encoding="cp1250") as f:
         for i, row in enumerate(f):
             parsed = parse_row(row)
-            to_add.append(core.models.Food(**parsed))
+            to_add.append(Food(**parsed))
             # Bulk create every 5000 entries to save RAM
             if i % 5000 == 0:
-                core.models.Food.objects.bulk_create(to_add)
+                Food.objects.bulk_create(to_add)
                 to_add.clear()
-    core.models.Food.objects.bulk_create(to_add)
+    Food.objects.bulk_create(to_add)
