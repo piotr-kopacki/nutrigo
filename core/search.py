@@ -6,8 +6,21 @@ from difflib import get_close_matches
 
 from django.db.models import Q
 
-from core import utils
 from core.models import Food, FoodWeight
+from core.utils import (
+    DEFAULT_MEASUREMENT,
+    DEFAULT_MEASUREMENT_VARIATIONS,
+    convert_range_to_one_amount,
+    get_unit,
+    is_decimal_amount,
+    is_measure_or_unit,
+    is_measurement,
+    remove_or_ingredients,
+    separate_letters_from_numbers,
+    singularize,
+    strip_special_chars,
+    strip_stop_words,
+)
 
 
 class ParseIngredientError(Exception):
@@ -104,10 +117,10 @@ def match_one_weight(food: Food, measurement: str) -> FoodWeight:
     if matches:
         return weights.filter(desc=matches[0])[0]
     # If couldn't match default measurement then try it's varations
-    if measurement == utils.DEFAULT_MEASUREMENT:
-        for def_measurement in utils.DEFAULT_MEASUREMENT_VARIATIONS:
+    if measurement == DEFAULT_MEASUREMENT:
+        for def_measurement in DEFAULT_MEASUREMENT_VARIATIONS:
             for weight in weights:
-                if def_measurement == utils.singularize(weight.desc):
+                if def_measurement == singularize(weight.desc):
                     matches.append(weight.desc)
     if matches:
         return weights.filter(desc=matches[0])[0]
@@ -174,11 +187,11 @@ def naive_parse_ingredient(string: str) -> dict:
     if not string:
         raise ParseIngredientError(string, "String cannot be empty.")
     raw = string
-    string = utils.strip_special_chars(string)
-    string = utils.separate_letters_from_numbers(string)
-    string = utils.remove_or_ingredients(string)
-    string = utils.strip_stop_words(string)
-    string = utils.convert_range_to_one_amount(string)
+    string = strip_special_chars(string)
+    string = separate_letters_from_numbers(string)
+    string = remove_or_ingredients(string)
+    string = strip_stop_words(string)
+    string = convert_range_to_one_amount(string)
     if not string:  # Re-check in case of invalid strings like "$$" etc.
         raise ParseIngredientError(raw, "String is not valid.")
     string_split = string.split()
@@ -190,68 +203,68 @@ def naive_parse_ingredient(string: str) -> dict:
     if (
         len(string_split) > 1
         and string_split[0].isnumeric()
-        and utils.is_decimal_amount(string_split[1])
+        and is_decimal_amount(string_split[1])
     ):
         # 1.0 - 1st and 2nd word are amounts (2nd is decimal)
         amount = list(map(int, string_split[1].split("/")))
         amount = amount[0] / amount[1]
         amount = amount + int(string_split[0])
-        if len(string_split) > 2 and utils.is_measure_or_unit(string_split[2]):
+        if len(string_split) > 2 and is_measure_or_unit(string_split[2]):
             # 1.1 - With unit e.g '1 1/2 cup of flour'
-            if utils.is_measurement(string_split[2]):
+            if is_measurement(string_split[2]):
                 measurement = string_split[2]
             else:
-                unit = utils.get_unit(string_split[2])
-            name = utils.singularize(" ".join(string_split[3:]))
+                unit = get_unit(string_split[2])
+            name = singularize(" ".join(string_split[3:]))
         else:
             # 1.2 - No unit e.g. '1 1/2 of chicken breast'
-            measurement = utils.DEFAULT_MEASUREMENT
-            name = utils.singularize(" ".join(string_split[2:]))
-    elif utils.is_decimal_amount(string_split[0]):
+            measurement = DEFAULT_MEASUREMENT
+            name = singularize(" ".join(string_split[2:]))
+    elif is_decimal_amount(string_split[0]):
         # 2.0 - 1st word is a decimal amount (and 2nd is not)
         amount = list(map(int, string_split[0].split("/")))
         amount = amount[0] / amount[1]
-        if len(string_split) > 1 and utils.is_measure_or_unit(string_split[1]):
+        if len(string_split) > 1 and is_measure_or_unit(string_split[1]):
             # 2.1 - With unit e.g. '1/2 cup of flour'
-            if utils.is_measurement(string_split[1]):
+            if is_measurement(string_split[1]):
                 measurement = string_split[1]
             else:
-                unit = utils.get_unit(string_split[1])
-            name = utils.singularize(" ".join(string_split[2:]))
+                unit = get_unit(string_split[1])
+            name = singularize(" ".join(string_split[2:]))
         else:
             # 2.2 - No unit e.g. '1/2 of chicken breast'
-            measurement = utils.DEFAULT_MEASUREMENT
-            name = utils.singularize(" ".join(string_split[1:]))
+            measurement = DEFAULT_MEASUREMENT
+            name = singularize(" ".join(string_split[1:]))
     elif string_split[0].isnumeric():
         # 3.0 - 1st word is an integer amount
-        if len(string_split) > 1 and utils.is_measure_or_unit(string_split[1]):
+        if len(string_split) > 1 and is_measure_or_unit(string_split[1]):
             # 3.1 - With unit e.g. '1 cup of flour'
             amount = int(string_split[0])
-            if utils.is_measurement(string_split[1]):
+            if is_measurement(string_split[1]):
                 measurement = string_split[1]
             else:
-                unit = utils.get_unit(string_split[1])
-            name = utils.singularize(" ".join(string_split[2:]))
+                unit = get_unit(string_split[1])
+            name = singularize(" ".join(string_split[2:]))
         else:
             # 3.2 - No unit e.g. '1 chicken breast'
             amount = int(string_split[0])
-            measurement = utils.DEFAULT_MEASUREMENT
-            name = utils.singularize(" ".join(string_split[1:]))
+            measurement = DEFAULT_MEASUREMENT
+            name = singularize(" ".join(string_split[1:]))
     else:
         # 4.0 - 1st word is not an amount
-        if utils.is_measure_or_unit(string_split[0]):
+        if is_measure_or_unit(string_split[0]):
             # 4.1 - With unit e.g. 'cup of flour'
             amount = 1
-            if utils.is_measurement(string_split[0]):
+            if is_measurement(string_split[0]):
                 measurement = string_split[0]
             else:
-                unit = utils.get_unit(string_split[0])
-            name = utils.singularize(" ".join(string_split[1:]))
+                unit = get_unit(string_split[0])
+            name = singularize(" ".join(string_split[1:]))
         else:
             # 4.2 - No unit e.g. 'chicken breast'
             amount = 1
-            measurement = utils.DEFAULT_MEASUREMENT
-            name = utils.singularize(" ".join(string_split[0:]))
+            measurement = DEFAULT_MEASUREMENT
+            name = singularize(" ".join(string_split[0:]))
     return {
         "amount": float(amount),
         "unit": unit,

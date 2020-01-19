@@ -7,9 +7,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import IngredientsSerializer
-from core import utils
 from core.ingredient import IngredientList
 from core.recipe import recipe_sites
+from core.utils import get_domain_from_url
 
 
 class IndexView(TemplateView):
@@ -85,7 +85,7 @@ class CalculateFromURL(APIView):
         if cached:
             return Response(cached)
         # Continue validation
-        recipe_domain = utils.get_domain_from_url(recipe_url)
+        recipe_domain = get_domain_from_url(recipe_url)
         if recipe_domain not in recipe_sites:
             return Response(
                 {"error": f"Domain '{recipe_domain}' is not yet supported."},

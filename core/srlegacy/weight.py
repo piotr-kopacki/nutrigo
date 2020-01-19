@@ -1,6 +1,6 @@
 import json
 
-import core.models
+from core.models import Food, FoodNutrition, FoodWeight
 
 COLUMN_NAMES = (  # Corresponding origin column names to model fields
     "NDB_No",  # food
@@ -38,7 +38,7 @@ def parse_row(row):
     row = dict(zip(COLUMN_NAMES, row))
     row = {k: CONVERT_TYPES[k](v) if v else v for k, v in row.items()}
     row = {COLUMN_TO_FIELD[k]: v for k, v in row.items() if k in COLUMN_TO_FIELD.keys()}
-    row["food"] = core.models.Food.objects.get(pk=row["food"])
+    row["food"] = Food.objects.get(pk=row["food"])
     return row
 
 
@@ -47,9 +47,9 @@ def main(filename):
     with open(filename, encoding="cp1250") as f:
         for i, row in enumerate(f):
             parsed = parse_row(row)
-            to_add.append(core.models.FoodWeight(**parsed))
+            to_add.append(FoodWeight(**parsed))
             # Bulk create every 5000 entries to save RAM
             if i % 5000 == 0:
-                core.models.FoodWeight.objects.bulk_create(to_add)
+                FoodWeight.objects.bulk_create(to_add)
                 to_add.clear()
-    core.models.FoodWeight.objects.bulk_create(to_add)
+    FoodWeight.objects.bulk_create(to_add)

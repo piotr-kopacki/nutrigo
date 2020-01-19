@@ -1,6 +1,18 @@
 from typing import Callable
 
-from core import models, search, utils
+from core.models import FoodNutrition
+from core.search import (
+    ParseIngredientError,
+    match_one_food,
+    match_one_weight,
+    parse_ingredient,
+)
+from core.utils import (
+    nutrient_to_tagname,
+    nutrient_units,
+    split_and_ingredients,
+    unit_to_grams,
+)
 
 
 class IngredientError(Exception):
@@ -24,9 +36,7 @@ class IngredientList:
     """
 
     def __init__(
-        self,
-        ingredient_list: list,
-        parser: Callable[[str], dict] = search.parse_ingredient,
+        self, ingredient_list: list, parser: Callable[[str], dict] = parse_ingredient
     ):
         """
         :ingredient_list - list of ingredients
@@ -36,13 +46,13 @@ class IngredientList:
         self.all = []
         self.bad = []
 
-        ingredient_list = utils.split_and_ingredients(ingredient_list)
+        ingredient_list = split_and_ingredients(ingredient_list)
         for ing in ingredient_list:
             try:
                 self.all.append(Ingredient(ing, parser=parser))
             except IngredientError:
                 self.bad.append(ing)
-            except search.ParseIngredientError:
+            except ParseIngredientError:
                 self.bad.append(ing)
 
     def __iter__(self):
@@ -85,7 +95,7 @@ class IngredientList:
         }
         for ing in self.all:
             for nutrient in total_nutrition:
-                value = ing.calc_nutrient(utils.nutrient_to_tagname[nutrient])
+                value = ing.calc_nutrient(nutrient_to_tagname[nutrient])
                 if value:
                     total_nutrition[nutrient] += value
         # Round results and create a tuple with value and unit
@@ -93,7 +103,7 @@ class IngredientList:
             total_nutrition[k] = (
                 round(v, 2),
                 round(v / servings, 2),
-                utils.nutrient_units[k],
+                nutrient_units[k],
             )
 
         return total_nutrition
@@ -125,9 +135,7 @@ class Ingredient:
     :measurement - measurement (if parsed or no unit) e.g. slice, stick, batch, etc..
     """
 
-    def __init__(
-        self, to_parse: str, parser: Callable[[str], dict] = search.parse_ingredient
-    ):
+    def __init__(self, to_parse: str, parser: Callable[[str], dict] = parse_ingredient):
         """
         :to_parse - ingredient name
         :parser - parser which handles user input (ingredient name)
@@ -135,11 +143,11 @@ class Ingredient:
         self.amount, self.unit, self.measurement, self.name, self.raw_input = parser(
             to_parse
         ).values()
-        self.matched_food = search.match_one_food(self.name)
+        self.matched_food = match_one_food(self.name)
         if not self.matched_food:
             raise IngredientError(to_parse, f"Couldn't match a food object.")
         if self.unit:
-            self.weight = self.amount * utils.unit_to_grams[self.unit]
+            self.weight = self.amount * unit_to_grams[self.unit]
         else:
             self.weight = self.get_weight()
 
@@ -151,7 +159,7 @@ class Ingredient:
             raise IngredientError(
                 self.matched_food, f"This food doesn't have any FoodWeight objects."
             )
-        matched_weight = search.match_one_weight(self.matched_food, self.measurement)
+        matched_weight = match_one_weight(self.matched_food, self.measurement)
         return float(matched_weight.value) * (
             self.amount / float(matched_weight.amount)
         )
@@ -173,13 +181,13 @@ class Ingredient:
             return None
         return float(nutrient.value) / 100 * self.weight
 
-    def get_nutrient_by_tagname(self, tagname: str) -> models.FoodNutrition:
+    def get_nutrient_by_tagname(self, tagname: str) -> FoodNutrition:
         """
         Returns nutrient by tagname (if exists in database)
         """
         try:
             return self.matched_food.nutrition.get(tagname=tagname)
-        except models.FoodNutrition.DoesNotExist:
+        except FoodNutrition.DoesNotExist:
             return None
 
     @property
