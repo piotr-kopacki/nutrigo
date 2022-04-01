@@ -4,7 +4,7 @@
   <img alt="Coveralls github branch" src="https://img.shields.io/coveralls/github/MakuZo/nutrigo/1.0.0-dev">
 <img alt="Travis (.com)" src="https://img.shields.io/travis/com/MakuZo/nutrigo/1.0.0-dev.svg">
 </p>
-<p align="center">Try live <a href="https://nutrigo.makuzo.usermd.net">here</a></p>
+<p align="center">Try live <a href="https://oneciabatta.dev/nutrigo">here</a></p>
 <p align="center">
 <img align="center" width="70%" height="70%" src="https://i.imgur.com/7zhqcxq.jpg"></img>
 </p>
