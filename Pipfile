@@ -14,7 +14,7 @@ isort = "*"
 pre-commit = "*"
 
 [packages]
-djangorestframework = "==3.9.3"
+djangorestframework = "==3.11.2"
 textblob = "*"
 requests = "*"
 beautifulsoup4 = "==4.7.1"
